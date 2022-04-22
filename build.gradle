@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.5.13-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.asciidoctor.jvm.convert' version '3.3.2' //asciidoctor plugin 추가
 }
 
 group = 'com.example'
@@ -9,6 +10,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
+	asciidoctorExtensions // dependencies 에서 적용한 것 추가
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -29,10 +31,70 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// https://mvnrepository.com/artifact/com.auth0/java-jwt
+	implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.3'
+	// Gson
+	implementation group: 'com.google.code.gson', name: 'gson'
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// AOP
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+
+	// Spring REST Docs
+	// build/generated-snippets 에 생긴 .adoc 조각들을 프로젝트 내의 .adoc 파일에서 읽어들일 수 있도록 연동해준다.
+	// 이 덕분에 .adoc 파일에서 operation 같은 매크로를 사용하여 스니펫 조각들을 연동할 수 있다.
+	// 그리고 최종적으로 .adoc 파일을 HTML로 만들어 export 해준다.
+	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+	// restdocs-mockmvc의 testCompile 구성 -> mockMvc를 사용해서 snippets 조각들을 뽑아낼 수 있게 된다.
+	// MockMvc 대신 WebTestClient을 사용하려면 spring-restdocs-webtestclient 추가
+	// MockMvc 대신 REST Assured를 사용하려면 spring-restdocs-restassured 를 추가
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// JUnit
+	testImplementation 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params'
 }
 
-tasks.named('test') {
+ext {
+	snippetsDir = file("build/generated-snippets") // snippets 파일을 저장할 디렉토리 생성
+}
+
+test {
+	outputs.dir snippetsDir // 생성된 파일을 미리 생성한 디렉토리 (build/generated-snippets) 에 저장
 	useJUnitPlatform()
+}
+
+// static/docs 폴더 비우기
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+asciidoctor { //6
+	dependsOn test // test 작업 이후에 작동하도록 하는 설정
+    configurations 'asciidoctorExtensions' // 위에서 작성한 configuration 적용
+	inputs.dir snippetsDir // snippetsDir 를 입력으로 구성
+}
+
+bootJar {
+	dependsOn asciidoctor
+	from file("${asciidoctor.outputDir}")
+	into file("src/main/resources/static/docs")
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+// build 의 의존작업 명시
+build {
+	dependsOn copyDocument
 }
