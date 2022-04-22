@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.5.13-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2' //asciidoctor plugin 추가
 }
 
@@ -40,6 +41,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// AOP
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
+	// Querydsl
+	implementation('com.querydsl:querydsl-jpa')
 
 	// Spring REST Docs
 	// build/generated-snippets 에 생긴 .adoc 조각들을 프로젝트 내의 .adoc 파일에서 읽어들일 수 있도록 연동해준다.
@@ -60,6 +63,22 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api'
 	testImplementation 'org.junit.jupiter:junit-jupiter-engine'
 	testImplementation 'org.junit.jupiter:junit-jupiter-params'
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+// 에디터
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
 }
 
 ext {
