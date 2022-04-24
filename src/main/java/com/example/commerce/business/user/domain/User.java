@@ -1,6 +1,6 @@
 package com.example.commerce.business.user.domain;
 
-import com.example.commerce.common.constant.BaseEntity;
+import com.example.commerce.common.constant.BaseTimeEntity;
 import com.example.commerce.common.constant.JoinType;
 import com.example.commerce.common.constant.Role;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Getter @ToString
 @Table(name = "user")
-public class User extends BaseEntity {
+public class User extends BaseTimeEntity {
 
     @Id @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
