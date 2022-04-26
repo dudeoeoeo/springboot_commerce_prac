@@ -15,16 +15,25 @@ public class TokenProvider {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public String generateToken(Long userId, String username) {
+    public String generateToken(Long userId) {
         Algorithm algorithm = Algorithm.HMAC512(secret);
-        return JWT.create()
+        return JwtProperties.HEADER + JWT.create()
                 .withSubject(String.valueOf(userId))
                 .withClaim("exp", Instant.now().getEpochSecond() + JwtProperties.lifeTime)
                 .sign(algorithm);
     }
 
+    public String refreshToken(Long userId) {
+        Algorithm algorithm = Algorithm.HMAC512(secret);
+        return JwtProperties.HEADER + JWT.create()
+                .withSubject(String.valueOf(userId))
+                .withClaim("exp", Instant.now().getEpochSecond() + JwtProperties.refreshTime)
+                .sign(algorithm);
+    }
+
     public VerifyResult verify(String token) {
         Algorithm algorithm = Algorithm.HMAC512(secret);
+        token = replaceToken(token);
         try {
             DecodedJWT decode = JWT.require(algorithm).build().verify(token);
             return VerifyResult.builder().userId(Long.valueOf(decode.getSubject())).result(true).build();
@@ -34,4 +43,9 @@ public class TokenProvider {
         }
     }
 
+    public String replaceToken(String token) {
+        if (token.startsWith(JwtProperties.HEADER))
+            return token = token.replace(JwtProperties.HEADER, "");
+        return token;
+    }
 }

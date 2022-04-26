@@ -1,5 +1,10 @@
 package com.example.commerce.common.config.security;
 
+import com.example.commerce.business.auth.repository.TokenRepository;
+import com.example.commerce.business.auth.util.TokenProvider;
+import com.example.commerce.common.config.jwt.JWTLoginFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -9,11 +14,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration // IoC 빈 등록
 @EnableWebSecurity // 필터 체인 관리 어노테이션
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // 특정 주소 접근시 권한 및 인증을 위한 어노테이션 활성화
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final CorsFilter corsFilter;
+    private final TokenRepository tokenRepository;
+    private final ObjectMapper objectMapper;
+    private final TokenProvider tokenProvider;
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -29,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
         .httpBasic().disable()
         .formLogin().disable()
+        .addFilter(new JWTLoginFilter(authenticationManager(), objectMapper, tokenProvider, tokenRepository))
         .authorizeRequests()
         .antMatchers("/api/v1/user/**")
         .hasRole("USER")
