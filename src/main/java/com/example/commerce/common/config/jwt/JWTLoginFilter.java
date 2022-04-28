@@ -32,6 +32,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         this.objectMapper = objectMapper;
         this.tokenProvider = tokenProvider;
         this.tokenRepository = tokenRepository;
+        setFilterProcessesUrl("/login");
     }
 
     @SneakyThrows
@@ -39,6 +40,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         UserLoginRequest userLogin = objectMapper.readValue(request.getInputStream(), UserLoginRequest.class);
+        System.out.println("JWTLoginFilter userLogin " + userLogin.toString());
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 userLogin.getEmail(), userLogin.getPassword(), null

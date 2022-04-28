@@ -2,6 +2,8 @@ package com.example.commerce.common.config.security;
 
 import com.example.commerce.business.auth.repository.TokenRepository;
 import com.example.commerce.business.auth.util.TokenProvider;
+import com.example.commerce.business.user.repository.UserRepository;
+import com.example.commerce.common.config.jwt.JWTCheckFilter;
 import com.example.commerce.common.config.jwt.JWTLoginFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenRepository tokenRepository;
     private final ObjectMapper objectMapper;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -34,15 +37,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .headers().frameOptions().disable()
         .and()
         .addFilter(corsFilter)
         .httpBasic().disable()
         .formLogin().disable()
         .addFilter(new JWTLoginFilter(authenticationManager(), objectMapper, tokenProvider, tokenRepository))
+        .addFilter(new JWTCheckFilter(authenticationManager(), userRepository, tokenProvider))
         .authorizeRequests()
         .antMatchers("/api/v1/user/**")
         .hasRole("USER")
