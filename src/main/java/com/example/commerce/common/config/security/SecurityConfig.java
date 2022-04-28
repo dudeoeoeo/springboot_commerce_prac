@@ -39,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
+        .addFilter(corsFilter)
         .httpBasic().disable()
         .formLogin().disable()
         .addFilter(new JWTLoginFilter(authenticationManager(), objectMapper, tokenProvider, tokenRepository))
