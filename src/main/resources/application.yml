@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8080
   servlet:
     context-path: /shop
     encoding:
@@ -7,22 +7,28 @@ server:
       enabled: true
       force: true
 
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3316/commerce?serverTimezone=Asia/Seoul
+#    username: kay
+#    password: kay1234
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3316/commerce?serverTimezone=Asia/Seoul
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test://localhost/~/shop
     username: kay
-    password: kay1234
+    password:
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
     # open-in-view 의 기본 값은 true 이며
     # 영속성 컨텍스트가 트랜잭션 범위를 넘어선 레이어까지 유지된다.
     # Api 의 경우 => Client 에게 return 될 때까지 유지된다.
     # false 일 경우 Transaction 이 종료되면 컨텍스트도 닫힌다.
     open-in-view: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
       naming:
         # 물리적 명칭 전략 => 해당 전략은 명시적 또는 암시적으로
         # 명칭이 결정되어도 마지막에 적용이 된다
