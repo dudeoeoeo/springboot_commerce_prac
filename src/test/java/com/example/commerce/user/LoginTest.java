@@ -3,6 +3,7 @@ package com.example.commerce.user;
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.repository.UserRepository;
+import com.example.commerce.common.constant.JoinType;
 import com.example.commerce.common.constant.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,7 +44,8 @@ public class LoginTest {
     @Autowired
     EntityManager em;
 
-    PasswordEncoder delegatingPasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -62,7 +65,7 @@ public class LoginTest {
     @BeforeEach
     private void init(){
         userRepository.save(User.builder()
-                .password(delegatingPasswordEncoder.encode(PASSWORD))
+                .password(bCryptPasswordEncoder.encode(PASSWORD))
                 .name("Member1")
                 .email(EMAIL)
                 .role(Role.USER)
@@ -77,7 +80,6 @@ public class LoginTest {
         return map;
     }
 
-
     private ResultActions perform(String url, MediaType mediaType, Map usernamePasswordMap) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .post(url)
@@ -87,6 +89,7 @@ public class LoginTest {
 
     @Test
     public void 로그인_성공() throws Exception {
+
         //given
         Map<String, String> map = getUsernamePasswordMap(EMAIL, PASSWORD);
 

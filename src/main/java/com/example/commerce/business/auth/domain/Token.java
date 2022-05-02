@@ -2,15 +2,12 @@ package com.example.commerce.business.auth.domain;
 
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

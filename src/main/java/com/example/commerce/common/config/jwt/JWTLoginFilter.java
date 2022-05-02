@@ -6,6 +6,7 @@ import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.auth.util.TokenProvider;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.dto.request.UserLoginRequest;
+import com.example.commerce.common.config.security.auth.UserDetail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,9 +54,9 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
 
-        User user = (User) authResult.getPrincipal();
-        response.addHeader(JwtProperties.HEADER_STRING, tokenProvider.generateToken(user.getId()));
-        String refreshToken = generateRefreshToken(user);
+        UserDetail userDetail = (UserDetail) authResult.getPrincipal();
+        response.addHeader(JwtProperties.HEADER_STRING, tokenProvider.generateToken(userDetail.getUser().getId()));
+        String refreshToken = generateRefreshToken(userDetail.getUser());
         response.addHeader(JwtProperties.REFRESH_TOKEN_HEADER, refreshToken);
     }
 
