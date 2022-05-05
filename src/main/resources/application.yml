@@ -20,6 +20,11 @@ spring:
     username: kay
     password:
 
+    hikari:
+      connectionTimeout: 30000
+# Springboot 은 hikari pool 에서 DB connection 관리를 한다.
+      maximumPoolSize: 10
+
   jpa:
 #    database-platform: org.hibernate.dialect.MySQL8Dialect
     # open-in-view 의 기본 값은 true 이며
