@@ -3,9 +3,10 @@ package com.example.commerce.common.dto;
 public enum ErrorCode {
 
     // USUAL
-    INVALID_INPUT_VALUE(400, "USUAL_001", " Invalid Input Value"),
-    METHOD_NOT_ALLOWED(405, "USUAL_002", "Method not allowed"),
-    HANDLE_ACCESS_DENIED(403, "USUAL_003", "Access is Denied"),
+    INVALID_INPUT_VALUE(400, "USUAL_001", "Invalid Input Value"),
+    UN_AUTHORIZED(401, "USUAL_002", "User is unauthorized"),
+    METHOD_NOT_ALLOWED(405, "USUAL_003", "Method not allowed"),
+    HANDLE_ACCESS_DENIED(403, "USUAL_004", "Access is Denied"),
 
     // Standard
     ILLEGAL_STATE(400, "STANDARD_001", "illegal state"),
