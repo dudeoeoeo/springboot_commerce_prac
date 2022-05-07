@@ -5,6 +5,7 @@ import com.example.commerce.business.auth.repository.TokenRepository;
 import com.example.commerce.business.auth.util.TokenProvider;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.dto.request.UserLoginRequest;
+import com.example.commerce.business.user.dto.request.UserSignUpRequest;
 import com.example.commerce.business.user.repository.UserRepository;
 import com.example.commerce.common.config.security.auth.UserDetail;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,12 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+
+    @Override
+    public void signUp(UserSignUpRequest signUpRequest) {
+        User newUser = User.newUser(signUpRequest, passwordEncoder);
+        userRepository.save(newUser);
+    }
 
     @Override
     public TokenResponse signIn(UserLoginRequest loginRequest) {

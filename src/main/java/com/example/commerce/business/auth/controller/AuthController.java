@@ -27,8 +27,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signUp")
-    public void signUp(@Valid @RequestBody UserSignUpRequest signUpRequest) {
+    public SuccessResponse signUp(@Valid @RequestBody UserSignUpRequest signUpRequest) {
         logger.info("[AuthController][signUp] called {}", signUpRequest.toString());
+        return SuccessResponse.of(HttpStatus.OK.value(), "회원가입 되었습니다.");
     }
 
     @PostMapping("/signIn")
