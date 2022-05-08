@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -33,12 +34,14 @@ public class AuthServiceImpl implements AuthService {
     private final TokenProvider tokenProvider;
 
     @Override
+    @Transactional
     public void signUp(UserSignUpRequest signUpRequest) {
         User newUser = User.newUser(signUpRequest, passwordEncoder);
         userRepository.save(newUser);
     }
 
     @Override
+    @Transactional
     public TokenResponse signIn(UserLoginRequest loginRequest) {
         final Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());
         if (!findUser.isPresent()) {
