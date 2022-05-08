@@ -45,6 +45,12 @@ public class TokenProvider {
         }
     }
 
+    public Long getUserId(String token) {
+        Algorithm algorithm = Algorithm.HMAC512(secret);
+        token = replaceToken(token);
+        return Long.valueOf(JWT.decode(token).getSubject());
+    }
+
     public String replaceToken(String token) {
         if (token.startsWith(JwtProperties.HEADER))
             return token = token.replace(JwtProperties.HEADER, "");
