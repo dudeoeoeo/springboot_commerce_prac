@@ -1,9 +1,11 @@
 package com.example.commerce.business.user.domain;
 
+import com.example.commerce.business.user.dto.request.UserSignUpRequest;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import com.example.commerce.common.constant.JoinType;
 import com.example.commerce.common.constant.Role;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -21,6 +23,7 @@ public class User extends BaseTimeEntity {
 
     private String name;
 
+    @Column(name = "email", unique = true)
     private String email;
 
     private String password;
@@ -30,4 +33,15 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     private JoinType joinType;
+
+    public static User newUser(UserSignUpRequest signUpRequest, PasswordEncoder passwordEncoder) {
+        return User.builder()
+                .name(signUpRequest.getName())
+                .email(signUpRequest.getEmail())
+                .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .phone(signUpRequest.getPhone())
+                .role(Role.USER)
+                .joinType(JoinType.valueOf(signUpRequest.getJoinType()))
+                .build();
+    }
 }
