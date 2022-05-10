@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
-    List<Address> findAllByUser(User user);
+    List<Address> findAllByUserAndDeleteYn(User user, int deleteYn);
 }

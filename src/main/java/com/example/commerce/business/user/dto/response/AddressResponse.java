@@ -1,10 +1,9 @@
 package com.example.commerce.business.user.dto.response;
 
+import com.example.commerce.business.user.domain.Address;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class AddressResponse {
 
      private Long id;
