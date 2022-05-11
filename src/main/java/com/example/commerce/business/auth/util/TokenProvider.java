@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -46,6 +45,8 @@ public class TokenProvider {
     }
 
     public Long getUserId(String token) {
+        if (token == null || token.equals(""))
+            throw new NullPointerException("Token을 찾을 수 없습니다.");
         Algorithm algorithm = Algorithm.HMAC512(secret);
         token = replaceToken(token);
         return Long.valueOf(JWT.decode(token).getSubject());
