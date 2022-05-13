@@ -9,6 +9,7 @@ import com.example.commerce.business.user.repository.AddressRepository;
 import com.example.commerce.business.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -68,10 +69,12 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public void deleteAddress(Long addressId) {
+    public void deleteAddress(Long addressId, Long userId) {
         final Optional<Address> address = addressRepository.findById(addressId);
         if (address.isEmpty())
             throw new IllegalArgumentException("해당 주소를 찾을 수 없습니다.");
+        if (address.get().getUser().getId() != userId)
+            throw new BadCredentialsException("본인이 등록한 주소만 삭제 가능합니다.");
         address.get().deleteAddress();
         addressRepository.save(address.get());
     }

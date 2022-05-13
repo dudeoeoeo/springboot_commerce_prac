@@ -146,4 +146,20 @@ public class UserControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void 주소_삭제하기() throws Exception {
+        final String token = getToken();
+        saveAddress(token);
+        final Optional<Address> address = addressRepository.findById(1L);
+
+        mockMvc.perform(
+                delete("/api/v1/user/address/{addressId}/delete", 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(JwtProperties.HEADER_STRING, token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
