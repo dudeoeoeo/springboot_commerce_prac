@@ -20,7 +20,7 @@ public class Item extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_id")
+    @Column(name = "item_id", unique = true)
     private String itemId;
 
     private String name;
@@ -30,6 +30,9 @@ public class Item extends BaseTimeEntity {
     private int stock;
 
     private int weight;
+
+    @OneToMany
+    private List<ItemImage> itemImages = new ArrayList<>();
 
     @OneToMany
     private List<ItemOption> options = new ArrayList<>();
