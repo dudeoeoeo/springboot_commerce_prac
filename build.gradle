@@ -43,6 +43,10 @@ dependencies {
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
 	// Querydsl
 	implementation('com.querydsl:querydsl-jpa')
+	
+	// AWS
+	implementation ("com.amazonaws:aws-java-sdk-s3:1.11.238")
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	// Spring REST Docs
 	// build/generated-snippets 에 생긴 .adoc 조각들을 프로젝트 내의 .adoc 파일에서 읽어들일 수 있도록 연동해준다.

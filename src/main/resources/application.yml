@@ -63,3 +63,17 @@ logging:
 jwt:
   secret: ${JWT_SECRET}
   issuer: ${JWT_ISSUER}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_KEY}
+    s3:
+      bucket: ${BUCKET_NAME}
+      origin:
+        domain: ${S3_ORIGIN_DOMAIN}
+    region: ${REGION}
+    stack: auto
+    front:
+      domain: ${FRONT_DOMAIN}
