@@ -52,6 +52,7 @@ public class AmazonS3Service {
     }
 
     public String createFileName(String folderName, String originFileName) {
+        if (folderName.indexOf("/") > -1) folderName = folderName.replaceAll("/", "");
         return folderName + "/" + UUID.randomUUID().toString().contains(getFileExtension(originFileName));
     }
 
