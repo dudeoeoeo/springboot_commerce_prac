@@ -1,5 +1,7 @@
 package com.example.commerce.business.item.domain;
 
+import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
+import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
@@ -20,8 +22,11 @@ public class Item extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "item_id", unique = true)
-    private String itemId;
+    /**
+     * TODO: Unique itemId 를 사용해서 어떤 작업에서 효율적으로 할 지..
+     */
+//    @Column(name = "item_id", unique = true)
+//    private String itemId;
 
     private String name;
 
@@ -45,4 +50,15 @@ public class Item extends BaseTimeEntity {
     private String deleteBy;
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
+
+    public static Item newItem(User user, ItemAddRequestDto dto, List<ItemImage> itemImages) {
+        return Item.builder()
+                .name(dto.getName())
+                .price(dto.getPrice())
+                .stock(dto.getStock())
+                .weight(dto.getWeight())
+                .itemImages(itemImages)
+                .itemStatus(ItemStatus.SELL)
+                .build();
+    }
 }

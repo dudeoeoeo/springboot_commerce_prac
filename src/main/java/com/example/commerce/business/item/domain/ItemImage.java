@@ -1,5 +1,6 @@
 package com.example.commerce.business.item.domain;
 
+import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
@@ -36,4 +37,12 @@ public class ItemImage extends BaseTimeEntity {
 
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
+
+    public static ItemImage newItemImage(User user, String imageUrl, int orderedSeq) {
+        return ItemImage.builder()
+                .imageUrl(imageUrl)
+                .viewYn(1)
+                .orderedSeq(orderedSeq)
+                .build();
+    }
 }
