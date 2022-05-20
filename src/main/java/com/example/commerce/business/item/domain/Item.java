@@ -1,6 +1,7 @@
 package com.example.commerce.business.item.domain;
 
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
+import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
@@ -46,6 +47,8 @@ public class Item extends BaseTimeEntity {
     @Column(name = "item_status")
     private ItemStatus itemStatus;
 
+    @Column(name = "delete_yn", insertable = false)
+    private int deleteYn;
     @Column(name = "delete_by", insertable = false)
     private String deleteBy;
     @Column(name = "delete_dt", insertable = false)
@@ -60,5 +63,18 @@ public class Item extends BaseTimeEntity {
                 .itemImages(itemImages)
                 .itemStatus(ItemStatus.SELL)
                 .build();
+    }
+
+    public void updateItemContent(ItemUpdateRequestDto dto) {
+        this.name = dto.getName();
+        this.price = dto.getPrice();
+        this.stock = dto.getStock();
+        this.weight = dto.getWeight();
+    }
+
+    public void deleteItem(User user) {
+        this.deleteYn = 1;
+        this.deleteBy = user.getName();
+        this.deleteDt = LocalDateTime.now();
     }
 }

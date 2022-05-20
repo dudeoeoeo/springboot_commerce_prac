@@ -3,6 +3,7 @@ package com.example.commerce.business.item.service;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemImage;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
+import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
 import com.example.commerce.business.item.repository.ItemRepository;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
@@ -29,7 +30,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Transactional
     public void addItem(Long userId, ItemAddRequestDto dto, List<MultipartFile> multipartFiles) {
-        final User user = userService.foundUserByUserId(userId);
+        final User user = userService.findUserByUserId(userId);
         final List<String> imagePaths = amazonS3Service.uploadFiles(multipartFiles, FOLDER_NAME);
 
         final List<ItemImage> itemImages = imageService.createItemImage(user, imagePaths);
@@ -39,12 +40,23 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void updateItem(Long userId) {
-
+    public void updateItem(Long itemId, ItemUpdateRequestDto dto) {
+        final Item item = findByItemId(itemId);
+        item.updateItemContent(dto);
+        itemRepository.save(item);
     }
 
     @Override
     public void deleteItem(Long userId, Long itemId) {
+        final User user = userService.findUserByUserId(userId);
+        final Item item = findByItemId(itemId);
+        item.deleteItem(user);
 
+        itemRepository.save(item);
+    }
+
+    public Item findByItemId(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalThreadStateException("해당 상품을 찾을 수 없습니다."));
     }
 }

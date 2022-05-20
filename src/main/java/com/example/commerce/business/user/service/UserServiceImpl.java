@@ -12,7 +12,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public User foundUserByUserId(Long userId) {
+    public User findUserByUserId(Long userId) {
          return userRepository.findById(userId).orElseThrow(
                 () -> new UsernameNotFoundException("해당 유저를 찾을 수 없습니다.")
         );

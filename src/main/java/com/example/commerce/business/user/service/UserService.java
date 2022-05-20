@@ -4,5 +4,5 @@ import com.example.commerce.business.user.domain.User;
 
 public interface UserService {
 
-    User foundUserByUserId(Long userId);
+    User findUserByUserId(Long userId);
 }
