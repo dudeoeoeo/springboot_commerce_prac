@@ -4,11 +4,15 @@ import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemImage;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
 import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
+import com.example.commerce.business.item.dto.response.ItemResponseDto;
 import com.example.commerce.business.item.repository.ItemRepository;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
 import com.example.commerce.common.util.aws.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,14 +43,14 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.save(item);
     }
 
-    @Override
+    @Transactional
     public void updateItem(Long itemId, ItemUpdateRequestDto dto) {
         final Item item = findByItemId(itemId);
         item.updateItemContent(dto);
         itemRepository.save(item);
     }
 
-    @Override
+    @Transactional
     public void deleteItem(Long userId, Long itemId) {
         final User user = userService.findUserByUserId(userId);
         final Item item = findByItemId(itemId);
@@ -58,5 +62,15 @@ public class ItemServiceImpl implements ItemService {
     public Item findByItemId(Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalThreadStateException("해당 상품을 찾을 수 없습니다."));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ItemResponseDto> getItemList(int searchPage, int searchCount) {
+        Pageable request = PageRequest.of(getSearchPage(searchPage), searchCount);
+        return itemRepository.getItemList(request);
+    }
+
+    public int getSearchPage(int searchPage) {
+        return searchPage - 1 < 0 ? searchPage : searchPage - 1;
     }
 }

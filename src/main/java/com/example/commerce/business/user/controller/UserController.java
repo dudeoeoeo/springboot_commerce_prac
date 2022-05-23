@@ -47,13 +47,14 @@ public class UserController extends CommonUtil {
         return SuccessResponse.of(HttpStatus.OK.value(), addressService.updateAddress(addressId, updateAddressRequest));
     }
 
-    @PostMapping("/address/{addressId}/delete")
+    @DeleteMapping("/address/{addressId}/delete")
     public SuccessResponse deleteAddress (
             @PathVariable Long addressId,
             HttpServletRequest request
     )
     {
         final Long userId = getUserId(request);
+        addressService.deleteAddress(addressId, userId);
         return SuccessResponse.of(HttpStatus.OK.value(), "주소를 삭제했습니다.");
     }
 }

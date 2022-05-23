@@ -3,6 +3,8 @@ package com.example.commerce.business.item.service;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
 import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
+import com.example.commerce.business.item.dto.response.ItemResponseDto;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,4 +18,5 @@ public interface ItemService {
     void updateItem(Long itemId, ItemUpdateRequestDto dto);
     void deleteItem(Long userId, Long itemId);
     Item findByItemId(Long itemId);
+    Page<ItemResponseDto> getItemList(int searchPage, int searchCount);
 }
