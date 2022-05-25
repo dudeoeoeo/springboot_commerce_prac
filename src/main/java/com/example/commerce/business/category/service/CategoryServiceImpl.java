@@ -4,7 +4,6 @@ import com.example.commerce.business.category.domain.Category;
 import com.example.commerce.business.category.dto.request.CategoryAddRequestDto;
 import com.example.commerce.business.category.dto.response.CategoryResponseDto;
 import com.example.commerce.business.category.repository.CategoryRepository;
-import com.example.commerce.business.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
