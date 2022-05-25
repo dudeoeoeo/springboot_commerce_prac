@@ -45,4 +45,8 @@ public class Category extends BaseTimeEntity {
                 .deleteYn(0)
                 .build();
     }
+
+    public void deleteCategory() {
+        this.deleteYn = 1;
+    }
 }
