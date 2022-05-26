@@ -80,6 +80,18 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findByCategoryId(categoryId);
     }
 
+    @Transactional
+    public void updateItemImage(Long imageId, MultipartFile file) {
+        final String imagePath = amazonS3Service.uploadFile(file, FOLDER_NAME);
+        imageService.updateItemImage(imageId, imagePath);
+    }
+
+    @Transactional
+    public void deleteItemImage(Long userId, Long imageId) {
+        final User user = userService.findUserByUserId(userId);
+        imageService.deleteItemImage(imageId, user);
+    }
+
     public int getSearchPage(int searchPage) {
         return searchPage - 1 < 0 ? searchPage : searchPage - 1;
     }

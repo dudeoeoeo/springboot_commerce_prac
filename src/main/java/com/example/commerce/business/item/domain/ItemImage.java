@@ -45,4 +45,13 @@ public class ItemImage extends BaseTimeEntity {
                 .orderedSeq(orderedSeq)
                 .build();
     }
+
+    public void updateImage(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    public void deleteImage(User user) {
+        this.deleteBy = user.getName();
+        this.deleteDt = LocalDateTime.now().withNano(0);
+        this.deleteYn = 1;
+    }
 }

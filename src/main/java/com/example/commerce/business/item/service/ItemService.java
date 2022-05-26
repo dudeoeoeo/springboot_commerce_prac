@@ -21,4 +21,7 @@ public interface ItemService {
     Item findByItemId(Long itemId);
     Page<ItemResponseDto> getItemList(int searchPage, int searchCount);
     Optional<Item> findByCategoryId(Long categoryId);
+
+    void updateItemImage(Long imageId, MultipartFile file);
+    void deleteItemImage(Long userId, Long imageId);
 }
