@@ -16,5 +16,7 @@ public class ItemAddRequestDto {
 
     private int weight;
 
+    private Long categoryId;
+
     private List<Long> itemOptionList = new ArrayList<>();
 }

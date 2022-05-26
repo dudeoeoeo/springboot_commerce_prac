@@ -1,5 +1,6 @@
 package com.example.commerce.business.item.domain;
 
+import com.example.commerce.business.category.domain.Category;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
 import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
 import com.example.commerce.business.user.domain.User;
@@ -19,7 +20,7 @@ import java.util.List;
 @Table(name = "item")
 public class Item extends BaseTimeEntity {
 
-    @Id @Column(name = "id")
+    @Id @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -36,6 +37,10 @@ public class Item extends BaseTimeEntity {
     private int stock;
 
     private int weight;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @OneToMany
     private List<ItemImage> itemImages = new ArrayList<>();
@@ -54,12 +59,13 @@ public class Item extends BaseTimeEntity {
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
 
-    public static Item newItem(User user, ItemAddRequestDto dto, List<ItemImage> itemImages) {
+    public static Item newItem(User user, ItemAddRequestDto dto, List<ItemImage> itemImages, Category category) {
         return Item.builder()
                 .name(dto.getName())
                 .price(dto.getPrice())
                 .stock(dto.getStock())
                 .weight(dto.getWeight())
+                .category(category)
                 .itemImages(itemImages)
                 .itemStatus(ItemStatus.SELL)
                 .build();

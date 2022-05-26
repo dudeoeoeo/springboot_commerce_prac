@@ -1,5 +1,7 @@
 package com.example.commerce.business.item.service;
 
+import com.example.commerce.business.category.domain.Category;
+import com.example.commerce.business.category.service.CategoryService;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemImage;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final ItemImageService imageService;
     private final AmazonS3Service amazonS3Service;
+    private final CategoryService categoryService;
     private final String FOLDER_NAME = "product";
 
     /**
@@ -38,7 +42,8 @@ public class ItemServiceImpl implements ItemService {
         final List<String> imagePaths = amazonS3Service.uploadFiles(multipartFiles, FOLDER_NAME);
 
         final List<ItemImage> itemImages = imageService.createItemImage(user, imagePaths);
-        final Item item = Item.newItem(user, dto, itemImages);
+        final Category category = categoryService.findById(dto.getCategoryId());
+        final Item item = Item.newItem(user, dto, itemImages, category);
 
         itemRepository.save(item);
     }
@@ -68,6 +73,11 @@ public class ItemServiceImpl implements ItemService {
     public Page<ItemResponseDto> getItemList(int searchPage, int searchCount) {
         Pageable request = PageRequest.of(getSearchPage(searchPage), searchCount);
         return itemRepository.getItemList(request);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Item> findByCategoryId(Long categoryId) {
+        return itemRepository.findByCategoryId(categoryId);
     }
 
     public int getSearchPage(int searchPage) {
