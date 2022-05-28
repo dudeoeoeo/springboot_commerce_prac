@@ -54,8 +54,10 @@ public class Item extends BaseTimeEntity {
 
     @Column(name = "delete_yn", insertable = false)
     private int deleteYn;
+
     @Column(name = "delete_by", insertable = false)
     private String deleteBy;
+
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
 
@@ -81,6 +83,6 @@ public class Item extends BaseTimeEntity {
     public void deleteItem(User user) {
         this.deleteYn = 1;
         this.deleteBy = user.getName();
-        this.deleteDt = LocalDateTime.now();
+        this.deleteDt = LocalDateTime.now().withNano(0);
     }
 }
