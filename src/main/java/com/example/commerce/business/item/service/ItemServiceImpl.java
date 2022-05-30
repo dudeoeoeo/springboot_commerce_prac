@@ -10,6 +10,7 @@ import com.example.commerce.business.item.dto.response.ItemResponseDto;
 import com.example.commerce.business.item.repository.ItemRepository;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
+import com.example.commerce.common.dto.ResultResponse;
 import com.example.commerce.common.util.aws.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,7 @@ public class ItemServiceImpl implements ItemService {
      * TODO: static 결과 return class
      */
     @Transactional
-    public void addItem(Long userId, ItemAddRequestDto dto, List<MultipartFile> multipartFiles) {
+    public ResultResponse addItem(Long userId, ItemAddRequestDto dto, List<MultipartFile> multipartFiles) {
         final User user = userService.findUserByUserId(userId);
         final List<String> imagePaths = amazonS3Service.uploadFiles(multipartFiles, FOLDER_NAME);
 
@@ -46,22 +47,25 @@ public class ItemServiceImpl implements ItemService {
         final Item item = Item.newItem(user, dto, itemImages, category);
 
         itemRepository.save(item);
+        return ResultResponse.success("새로운 상품이 등록되었습니다.");
     }
 
     @Transactional
-    public void updateItem(Long itemId, ItemUpdateRequestDto dto) {
+    public ResultResponse updateItem(Long itemId, ItemUpdateRequestDto dto) {
         final Item item = findByItemId(itemId);
         item.updateItemContent(dto);
         itemRepository.save(item);
+        return ResultResponse.success("상품 정보가 업데이트 되었습니다.");
     }
 
     @Transactional
-    public void deleteItem(Long userId, Long itemId) {
+    public ResultResponse deleteItem(Long userId, Long itemId) {
         final User user = userService.findUserByUserId(userId);
         final Item item = findByItemId(itemId);
         item.deleteItem(user);
 
         itemRepository.save(item);
+        return ResultResponse.success("상품을 삭제 했습니다.");
     }
 
     public Item findByItemId(Long itemId) {
@@ -75,10 +79,10 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.getItemList(request);
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Item> findByCategoryId(Long categoryId) {
-        return itemRepository.findByCategoryId(categoryId);
-    }
+//    @Transactional(readOnly = true)
+//    public Optional<Item> findByCategoryId(Long categoryId) {
+//        return itemRepository.findByCategoryId(categoryId);
+//    }
 
     @Transactional
     public void updateItemImage(Long imageId, MultipartFile file) {
