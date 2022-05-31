@@ -25,7 +25,7 @@ public class ItemController extends CommonUtil {
     @PostMapping("/add")
     public SuccessResponse addItem(HttpServletRequest request,
                                    @RequestPart("images") final List<MultipartFile> itemImages,
-                                   @Valid @RequestBody final ItemAddRequestDto dto,
+                                   @Valid @RequestPart("item_request") final ItemAddRequestDto dto,
                                    BindingResult bindingResult)
     {
         final Long userId = getUserId(request);
@@ -39,11 +39,28 @@ public class ItemController extends CommonUtil {
     {
         return SuccessResponse.of(HttpStatus.OK.value(), itemService.updateItem(itemId, dto));
     }
+
+    @PostMapping("/{imageId}/image")
+    public SuccessResponse updateItemImage(HttpServletRequest request,
+                                           @PathVariable Long imageId,
+                                           @RequestPart("image") final MultipartFile itemImage)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), itemService.updateItemImage(imageId, itemImage));
+    }
+
     @DeleteMapping("/{itemId}")
     public SuccessResponse deleteItem(HttpServletRequest request,
                                       @PathVariable Long itemId)
     {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), itemService.deleteItem(userId, itemId));
+    }
+
+    @DeleteMapping("/{imageId}/image")
+    public SuccessResponse deleteItemImage(HttpServletRequest request,
+                                      @PathVariable Long imageId)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), itemService.deleteItemImage(userId, imageId));
     }
 }

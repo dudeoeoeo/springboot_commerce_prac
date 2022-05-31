@@ -85,15 +85,19 @@ public class ItemServiceImpl implements ItemService {
 //    }
 
     @Transactional
-    public void updateItemImage(Long imageId, MultipartFile file) {
+    public ResultResponse updateItemImage(Long imageId, MultipartFile file) {
         final String imagePath = amazonS3Service.uploadFile(file, FOLDER_NAME);
         imageService.updateItemImage(imageId, imagePath);
+
+        return ResultResponse.success("상품 이미지를 변경했습니다.");
     }
 
     @Transactional
-    public void deleteItemImage(Long userId, Long imageId) {
+    public ResultResponse deleteItemImage(Long userId, Long imageId) {
         final User user = userService.findUserByUserId(userId);
         imageService.deleteItemImage(imageId, user);
+
+        return ResultResponse.success("상품 이미지를 삭제했습니다.");
     }
 
     public int getSearchPage(int searchPage) {

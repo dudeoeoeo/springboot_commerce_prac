@@ -39,13 +39,15 @@ public class ItemImageServiceImpl implements ItemImageService {
     @Transactional
     public void updateItemImage(Long imageId, String imagePath) {
         final ItemImage image = findById(imageId);
-
+        image.updateImage(imagePath);
+        itemImageRepository.save(image);
     }
 
     @Transactional
     public void deleteItemImage(Long imageId, User user) {
         final ItemImage image = findById(imageId);
         image.deleteImage(user);
+        final ItemImage save = itemImageRepository.save(image);
     }
 
     public ItemImage findById(Long imageId) {
