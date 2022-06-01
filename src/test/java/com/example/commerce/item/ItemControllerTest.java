@@ -53,6 +53,22 @@ public class ItemControllerTest extends RestDocsTestSupport {
         return itemRepository.save(item);
     }
 
+    public void addItems() {
+        final Category category = addCategory();
+        for (int i = 1; i < 20; i++) {
+            final ItemImage itemImage = addItemImage();
+            final Item item = Item.builder()
+                    .name("흰색 와이셔츠")
+                    .price(34900)
+                    .stock(10)
+                    .category(category)
+                    .itemStatus(ItemStatus.SELL)
+                    .itemImages(new ArrayList<>(Arrays.asList(itemImage)))
+                    .build();
+            itemRepository.save(item);
+        }
+    }
+
     public ItemImage addItemImage() {
         final ItemImage itemImage = ItemImage.builder()
                 .imageUrl("https://t1.daumcdn.net/cfile/tistory/24283C3858F778CA2E")
@@ -155,6 +171,19 @@ public class ItemControllerTest extends RestDocsTestSupport {
         mockMvc.perform(
                 delete(PREFIX + "/{imageId}/image", item.getItemImages().get(0).getId())
                         .header(JwtProperties.HEADER_STRING, token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void getItemList() throws Exception {
+        addItems();
+        mockMvc.perform(
+                get(PREFIX + "/list")
+                    .param("searchPage", "1")
+                    .param("searchCount", "10")
         )
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -22,6 +22,13 @@ public class ItemController extends CommonUtil {
 
     private final ItemService itemService;
 
+    @GetMapping("/list")
+    public SuccessResponse getItemList(@RequestParam("searchPage") int searchPage,
+                                       @RequestParam("searchCount") int searchCount)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), itemService.getItemList(searchPage, searchCount));
+    }
+
     @PostMapping("/add")
     public SuccessResponse addItem(HttpServletRequest request,
                                    @RequestPart("images") final List<MultipartFile> itemImages,

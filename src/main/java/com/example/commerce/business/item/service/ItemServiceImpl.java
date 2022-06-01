@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     private final String FOLDER_NAME = "product";
 
     /**
-     * TODO: static 결과 return class
+      * TODO: item option 추가
      */
     @Transactional
     public ResultResponse addItem(Long userId, ItemAddRequestDto dto, List<MultipartFile> multipartFiles) {
