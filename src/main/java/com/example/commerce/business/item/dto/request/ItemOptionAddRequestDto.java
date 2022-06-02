@@ -2,7 +2,6 @@ package com.example.commerce.business.item.dto.request;
 
 import lombok.Getter;
 
-
 @Getter
 public class ItemOptionAddRequestDto {
 
@@ -10,9 +9,9 @@ public class ItemOptionAddRequestDto {
 
     private int optionStock;
 
-    private int optionSize;
+    private String optionSize;
 
-    private int optionColor;
+    private String optionColor;
 
-    private int optionWeight;
+    private double optionWeight;
 }

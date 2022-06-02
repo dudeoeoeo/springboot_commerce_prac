@@ -61,7 +61,9 @@ public class Item extends BaseTimeEntity {
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
 
-    public static Item newItem(User user, ItemAddRequestDto dto, List<ItemImage> itemImages, Category category) {
+    public static Item newItem(User user, ItemAddRequestDto dto,
+                               List<ItemImage> itemImages, Category category,
+                               List<ItemOption> options) {
         return Item.builder()
                 .name(dto.getName())
                 .price(dto.getPrice())
@@ -69,6 +71,7 @@ public class Item extends BaseTimeEntity {
                 .weight(dto.getWeight())
                 .category(category)
                 .itemImages(itemImages)
+                .options(options)
                 .itemStatus(ItemStatus.SELL)
                 .build();
     }

@@ -18,5 +18,6 @@ public class ItemAddRequestDto {
 
     private Long categoryId;
 
-    private List<Long> itemOptionList = new ArrayList<>();
+    private List<ItemOptionAddRequestDto> itemOptions = new ArrayList<>();
+
 }

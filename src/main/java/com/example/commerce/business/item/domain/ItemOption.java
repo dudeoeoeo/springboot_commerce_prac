@@ -28,13 +28,13 @@ public class ItemOption extends BaseTimeEntity {
     private int optionStock;
 
     @Column(name = "option_size")
-    private int optionSize;
+    private String optionSize;
 
     @Column(name = "option_color")
-    private int optionColor;
+    private String optionColor;
 
     @Column(name = "option_weight")
-    private int optionWeight;
+    private double optionWeight;
 
     @Column(name = "delete_yn", insertable = false)
     private int deleteYn;
