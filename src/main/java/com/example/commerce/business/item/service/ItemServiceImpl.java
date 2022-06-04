@@ -4,6 +4,7 @@ import com.example.commerce.business.category.domain.Category;
 import com.example.commerce.business.category.service.CategoryService;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemImage;
+import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.item.dto.request.ItemAddRequestDto;
 import com.example.commerce.business.item.dto.request.ItemUpdateRequestDto;
 import com.example.commerce.business.item.dto.response.ItemResponseDto;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository itemRepository;
     private final ItemImageService imageService;
+    private final ItemOptionService optionService;
     private final AmazonS3Service amazonS3Service;
     private final CategoryService categoryService;
     private final String FOLDER_NAME = "product";
@@ -40,11 +43,15 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ResultResponse addItem(Long userId, ItemAddRequestDto dto, List<MultipartFile> multipartFiles) {
         final User user = userService.findUserByUserId(userId);
-        final List<String> imagePaths = amazonS3Service.uploadFiles(multipartFiles, FOLDER_NAME);
 
+        final List<ItemOption> optionList = dto.getItemOptions()
+                .stream()
+                .map(option -> optionService.addItemOption(option))
+                .collect(Collectors.toList());
+        final List<String> imagePaths = amazonS3Service.uploadFiles(multipartFiles, FOLDER_NAME);
         final List<ItemImage> itemImages = imageService.createItemImage(user, imagePaths);
         final Category category = categoryService.findById(dto.getCategoryId());
-        final Item item = Item.newItem(user, dto, itemImages, category);
+        final Item item = Item.newItem(user, dto, itemImages, category, optionList);
 
         itemRepository.save(item);
         return ResultResponse.success("새로운 상품이 등록되었습니다.");
