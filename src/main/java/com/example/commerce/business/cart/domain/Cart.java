@@ -26,11 +26,11 @@ public class Cart extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "item_id")
     private List<Item> items = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "item_option_id")
     private List<ItemOption> options = new ArrayList<>();
 
@@ -41,10 +41,12 @@ public class Cart extends BaseTimeEntity {
     }
 
     /**
-     * TODO: 이미 추가한 상품이면 중복체크, 상품 옵션 수량 체크 필요
+     * TODO: 이미 추가한 상품이면 중복체크, 상품 옵션 수량 체크
+     *       장바구니에 상품 담는 로직 전체적인 변경 必
      */
     public void addItem(Item item, ItemOption option) {
-        this.items.add(item);
+        if (this.items != null && !this.items.contains(item))
+            this.items.add(item);
         this.options.add(option);
     }
 }

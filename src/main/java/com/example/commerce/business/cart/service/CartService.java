@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface CartService {
 
-    ResultResponse newCart(Long userId, AddCartItem dto);
+    ResultResponse addCart(Long userId, AddCartItem dto);
     Optional<Cart> findByUser(User user);
 }

@@ -26,18 +26,25 @@ public class CartServiceImpl implements CartService {
     private final ItemOptionService optionService;
 
     @Transactional
-    public ResultResponse newCart(Long userId, AddCartItem dto) {
+    public ResultResponse addCart(Long userId, AddCartItem dto) {
         final User user = userService.findUserByUserId(userId);
         final Optional<Cart> cart = findByUser(user);
+        System.out.println("cart: " + cart.get().toString());
+
         final Item item = itemService.findByItemId(dto.getItemId());
         final ItemOption option = optionService.findById(dto.getItemOptionId());
-        if (cart.isPresent()) {
+        System.out.println("item: " + item.toString());
+        System.out.println("option: " + option.toString());
+        if (cart.isEmpty()) {
             final Cart newCart = Cart.createCart(user);
             newCart.addItem(item, option);
-            cartRepository.save(newCart);
+            final Cart save = cartRepository.save(newCart);
         } else {
+            if(cart.get().getOptions() != null && cart.get().getOptions().contains(option)) {
+                return ResultResponse.success("이미 장바구니에 추가한 상품입니다.");
+            }
             cart.get().addItem(item, option);
-            cartRepository.save(cart.get());
+            final Cart save = cartRepository.save(cart.get());
         }
         return ResultResponse.success("장바구니에 상품을 추가했습니다.");
     }
