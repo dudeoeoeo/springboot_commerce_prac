@@ -3,11 +3,13 @@ package com.example.commerce.business.auth.service;
 import com.example.commerce.business.auth.dto.response.TokenResponse;
 import com.example.commerce.business.auth.repository.TokenRepository;
 import com.example.commerce.business.auth.util.TokenProvider;
+import com.example.commerce.business.cart.service.CartService;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.dto.request.UserLoginRequest;
 import com.example.commerce.business.user.dto.request.UserSignUpRequest;
 import com.example.commerce.business.user.repository.UserRepository;
 import com.example.commerce.common.config.security.auth.UserDetail;
+import com.example.commerce.common.dto.ResultResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,15 +34,16 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+    private final CartService cartService;
 
-    @Override
     @Transactional
-    public void signUp(UserSignUpRequest signUpRequest) {
+    public ResultResponse signUp(UserSignUpRequest signUpRequest) {
         User newUser = User.newUser(signUpRequest, passwordEncoder);
-        userRepository.save(newUser);
+        final User savedUser = userRepository.save(newUser);
+        cartService.newCart(savedUser);
+        return ResultResponse.success("회원가입 되었습니다.");
     }
 
-    @Override
     @Transactional
     public TokenResponse signIn(UserLoginRequest loginRequest) {
         final Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());

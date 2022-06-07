@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface CartService {
 
+    void newCart(User user);
     ResultResponse addCart(Long userId, AddCartItem dto);
     Optional<Cart> findByUser(User user);
 }
