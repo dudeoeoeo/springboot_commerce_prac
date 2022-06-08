@@ -2,6 +2,7 @@ package com.example.commerce.cart;
 
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.item.domain.Item;
+import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.config.RestDocsTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -28,11 +29,7 @@ public class CartControllerTest extends RestDocsTestSupport {
         Map<String, Object> request = new HashMap<>();
         request.put("itemId", item.getId());
         request.put("itemOptionId", item.getOptions().get(0).getId());
-        request.put("optionPrice", 12000);
         request.put("optionStock", 2);
-        request.put("optionSize", "XL");
-        request.put("optionColor", "red");
-        request.put("optionWeight", 1.5);
 
         mockMvc.perform(
                 post(PREFIX + "/add")
@@ -42,6 +39,7 @@ public class CartControllerTest extends RestDocsTestSupport {
         )
                 .andDo(print())
                 .andExpect(status().isOk());
+
     }
 
 }
