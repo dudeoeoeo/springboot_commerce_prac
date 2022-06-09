@@ -39,7 +39,48 @@ public class CartControllerTest extends RestDocsTestSupport {
         )
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
 
+    @Test
+    @Transactional
+    void 상품_최대수량_초과() throws Exception {
+        final String token = getToken();
+        final Item item = addItem();
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("itemId", item.getId());
+        request.put("itemOptionId", item.getOptions().get(0).getId());
+        request.put("optionStock", 12);
+
+        mockMvc.perform(
+                post(PREFIX + "/add")
+                        .content(createJson(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(JwtProperties.HEADER_STRING, token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void 상품_최소개수() throws Exception {
+        final String token = getToken();
+        final Item item = addItem();
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("itemId", item.getId());
+        request.put("itemOptionId", item.getOptions().get(0).getId());
+        request.put("optionStock", -10);
+
+        mockMvc.perform(
+                post(PREFIX + "/add")
+                        .content(createJson(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(JwtProperties.HEADER_STRING, token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 }

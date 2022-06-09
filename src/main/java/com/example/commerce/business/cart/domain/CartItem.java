@@ -38,7 +38,8 @@ public class CartItem {
 
     private int stock;
 
-    public static CartItem createCartItem(Cart cart, Item item, ItemOption option, int stock) {
+    public static CartItem createCartItem(Cart cart, Item item,
+                                          ItemOption option, int stock) {
         return CartItem.builder()
                 .cart(cart)
                 .item(item)
@@ -47,7 +48,11 @@ public class CartItem {
                 .build();
     }
 
+    public void addStock(int stock) {
+        this.stock += stock;
+    }
+
     public void updateStock(int stock) {
-        stock += stock;
+        this.stock = stock;
     }
 }

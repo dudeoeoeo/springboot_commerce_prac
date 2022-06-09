@@ -45,9 +45,14 @@ public class CartServiceImpl implements CartService {
 
         final CartItem saveCartItem = cartItemRepository.findByCartAndItemAndItemOption(cart, item, option);
 
+        if (dto.getOptionStock() > option.getOptionStock())
+            return ResultResponse.success("상품 최대 수량은 " + option.getOptionStock() + "개 입니다.");
+
         // 이미 추가했던 상품이므로 수량만 변경
         if (saveCartItem != null) {
-            saveCartItem.updateStock(dto.getOptionStock());
+            if (saveCartItem.getStock() + dto.getOptionStock() > option.getOptionStock())
+                return ResultResponse.success("상품 최대 수량은 " + option.getOptionStock() + "개 입니다.");
+            saveCartItem.addStock(dto.getOptionStock());
             return ResultResponse.success("상품을 장바구니에 담았습니다. 이미 담으신 상품이 있습니다. 장바구니로 이동하시겠습니까 ?");
         }
 
@@ -58,10 +63,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Transactional
-    public ResultResponse updateStock(Long userId, UpdateStock dto) {
+    public void updateStock(Long userId, UpdateStock dto) {
         final Cart cart = findByUser(userService.findUserByUserId(userId));
-
-        return null;
+        final CartItem cartItem = cartItemRepository.findByCartAndItemOption(cart, optionService.findById(dto.getItemOptionId()));
+        cartItem.updateStock(dto.getStock());
+        cartItemRepository.save(cartItem);
     }
 
     public Cart findByUser(User user) {
