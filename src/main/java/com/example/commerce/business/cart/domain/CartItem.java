@@ -2,6 +2,7 @@ package com.example.commerce.business.cart.domain;
 
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemOption;
+import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "cart_item")
-public class CartItem {
+public class CartItem extends BaseTimeEntity {
     /**
      * Cart 에 추가하는 상품은 cartItem 테이블에 저장
      * cart fk, item fk, option fk 저장

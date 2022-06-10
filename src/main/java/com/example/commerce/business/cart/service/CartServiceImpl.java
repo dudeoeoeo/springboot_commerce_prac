@@ -2,9 +2,11 @@ package com.example.commerce.business.cart.service;
 
 import com.example.commerce.business.cart.domain.Cart;
 import com.example.commerce.business.cart.domain.CartItem;
+import com.example.commerce.business.cart.domain.CartLog;
 import com.example.commerce.business.cart.dto.request.AddCartItem;
 import com.example.commerce.business.cart.dto.request.UpdateStock;
 import com.example.commerce.business.cart.repository.CartItemRepository;
+import com.example.commerce.business.cart.repository.CartLogRepository;
 import com.example.commerce.business.cart.repository.CartRepository;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemOption;
@@ -17,14 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
+    private final CartLogRepository cartLogRepository;
     private final UserService userService;
     private final ItemService itemService;
     private final ItemOptionService optionService;
@@ -73,5 +74,14 @@ public class CartServiceImpl implements CartService {
     public Cart findByUser(User user) {
         return cartRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalThreadStateException("해당 장바구니가 존재하지 않습니다."));
+    }
+
+    @Transactional
+    public ResultResponse deleteCartItem(Long userId, Long optionId) {
+        final User user = userService.findUserByUserId(userId);
+        final ItemOption option = optionService.findById(optionId);
+        final CartLog cartLog = CartLog.deleteCartItem(user, option);
+        cartLogRepository.save(cartLog);
+        return ResultResponse.success("장바구니에서 상품을 삭제했습니다.");
     }
 }

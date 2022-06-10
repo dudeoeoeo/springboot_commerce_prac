@@ -12,4 +12,5 @@ public interface CartService {
     ResultResponse addCart(Long userId, AddCartItem dto);
     void updateStock(Long userId, UpdateStock dto);
     Cart findByUser(User user);
+    ResultResponse deleteCartItem(Long userId, Long optionId);
 }
