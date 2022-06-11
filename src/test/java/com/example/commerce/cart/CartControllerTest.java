@@ -1,8 +1,10 @@
 package com.example.commerce.cart;
 
 import com.example.commerce.business.auth.util.JwtProperties;
+import com.example.commerce.business.cart.domain.Cart;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemOption;
+import com.example.commerce.business.user.domain.User;
 import com.example.commerce.config.RestDocsTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -83,4 +85,23 @@ public class CartControllerTest extends RestDocsTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Transactional
+    void getCartItem() throws Exception {
+        final User user = userSave();
+        final Cart cart = saveCart(user);
+        final String token = getTokenByUser(user);
+        final Item item = addItem();
+        saveCartItem(item, cart);
+
+        mockMvc.perform(
+            get(PREFIX + "/list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(JwtProperties.HEADER_STRING, token)
+                .param("searchPage", "1")
+                .param("searchCount", "10")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

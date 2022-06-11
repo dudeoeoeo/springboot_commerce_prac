@@ -7,10 +7,7 @@ import com.example.commerce.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,13 +19,29 @@ public class CartController extends CommonUtil {
 
     private final CartService cartService;
 
+    @GetMapping("/list")
+    public SuccessResponse getCartItem(HttpServletRequest request,
+                                       @RequestParam("searchPage") int searchPage,
+                                       @RequestParam("searchCount") int searchCount)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), cartService.getCartItem(userId, searchPage, searchCount));
+    }
+
     @PostMapping("/add")
-    public SuccessResponse addCart(HttpServletRequest request,
+    public SuccessResponse addCartItem(HttpServletRequest request,
                                        @Valid @RequestBody AddCartItem dto,
                                        BindingResult bindingResult)
     {
-        System.out.println("addCart: " + dto.toString());
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), cartService.addCart(userId, dto));
+    }
+
+    @DeleteMapping("/{optionId}")
+    public SuccessResponse deleteCartItem(HttpServletRequest request,
+                                          @PathVariable Long optionId)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), cartService.deleteCartItem(userId, optionId));
     }
 }
