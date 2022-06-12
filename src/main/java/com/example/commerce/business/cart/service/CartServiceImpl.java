@@ -5,6 +5,7 @@ import com.example.commerce.business.cart.domain.CartItem;
 import com.example.commerce.business.cart.domain.CartLog;
 import com.example.commerce.business.cart.dto.request.AddCartItem;
 import com.example.commerce.business.cart.dto.request.UpdateStock;
+import com.example.commerce.business.cart.dto.response.CartItemResponseDto;
 import com.example.commerce.business.cart.repository.CartItemRepository;
 import com.example.commerce.business.cart.repository.CartLogRepository;
 import com.example.commerce.business.cart.repository.CartRepository;
@@ -16,6 +17,8 @@ import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
 import com.example.commerce.common.dto.ResultResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,14 @@ public class CartServiceImpl implements CartService {
     private final UserService userService;
     private final ItemService itemService;
     private final ItemOptionService optionService;
+
+    @Transactional(readOnly = true)
+    public Page<CartItemResponseDto> getCartItem(Long userId, int page, int count) {
+        final User user = userService.findUserByUserId(userId);
+        final Cart cart = findByUser(user);
+        System.out.println("userId: " + userId + ", page: " + page + ", count: " + count);
+        return cartItemRepository.getCartItem(PageRequest.of(getSearchPage(page), count), cart);
+    }
 
     // 회원가입과 동시에 장바구니 생성
     @Transactional
@@ -83,5 +94,9 @@ public class CartServiceImpl implements CartService {
         final CartLog cartLog = CartLog.deleteCartItem(user, option);
         cartLogRepository.save(cartLog);
         return ResultResponse.success("장바구니에서 상품을 삭제했습니다.");
+    }
+
+    public int getSearchPage(int page) {
+        return page - 1 < 0 ? page : page - 1;
     }
 }
