@@ -1,5 +1,6 @@
 package com.example.commerce.business.order.domain;
 
+import com.example.commerce.business.order.dto.request.OrderForm;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
@@ -23,6 +24,9 @@ public class OrderOption extends BaseTimeEntity {
     @Column(name = "stock")
     private int stock;
 
+    @Column(name = "delivery_fee")
+    private int deliveryFee;
+
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
@@ -37,4 +41,17 @@ public class OrderOption extends BaseTimeEntity {
 
     @Column(name = "finished_date")
     private LocalDateTime finishedDate;
+
+    public static OrderOption createOrderOption(OrderForm dto, int deliveryFee, PaymentStatus paymentStatus) {
+        return OrderOption.builder()
+                .price(dto.getPrice())
+                .stock(dto.getStock())
+                .deliveryFee(deliveryFee)
+                .orderStatus(OrderStatus.ORDER)
+                .paymentStatus(paymentStatus)
+                .build();
+    }
+    public void addOrder(Order order) {
+        this.order = order;
+    }
 }

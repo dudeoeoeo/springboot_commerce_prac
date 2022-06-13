@@ -5,8 +5,10 @@ import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
+import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity @Getter
 @ToString @Builder
@@ -23,12 +25,19 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @OneToMany
     @JoinColumn(name = "item_id")
-    private Item item;
+    private List<Item> item;
 
-    @OneToOne
+    @OneToMany
     @JoinColumn(name = "item_option_id")
-    private ItemOption itemOption;
+    private List<ItemOption> itemOption;
 
+    public static Order createOrder(User user, List<Item> items, List<ItemOption> options) {
+        return Order.builder()
+                .user(user)
+                .item(items)
+                .itemOption(options)
+                .build();
+    }
 }
