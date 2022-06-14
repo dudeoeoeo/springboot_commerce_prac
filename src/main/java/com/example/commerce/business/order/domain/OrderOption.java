@@ -29,7 +29,7 @@ public class OrderOption extends BaseTimeEntity {
 
     @OneToOne
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders orders;
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "order_status")
@@ -51,7 +51,7 @@ public class OrderOption extends BaseTimeEntity {
                 .paymentStatus(paymentStatus)
                 .build();
     }
-    public void addOrder(Order order) {
-        this.order = order;
+    public void addOrder(Orders orders) {
+        this.orders = orders;
     }
 }
