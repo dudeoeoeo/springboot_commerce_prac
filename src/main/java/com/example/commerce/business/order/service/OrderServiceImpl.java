@@ -4,6 +4,7 @@ import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.item.service.ItemService;
+import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.domain.Orders;
 import com.example.commerce.business.order.domain.OrderOption;
 import com.example.commerce.business.order.dto.request.OrderRequest;
@@ -38,14 +39,26 @@ public class OrderServiceImpl implements OrderService {
         dto.getOrderForms().forEach(orderForm -> {
             items.add(itemService.findByItemId(orderForm.getItemId()));
             options.add(optionService.findById(orderForm.getItemOptionId()));
-            orderOptions.add(OrderOption.createOrderOption(orderForm, dto.getDeliveryFee(), dto.getPaymentStatus()));
+            orderOptions.add(OrderOption.createOrderOption(orderForm));
         });
 
-        final Orders saveOrder = orderRepository.save(Orders.createOrder(user, items, options));
+        final Orders saveOrder = orderRepository.save(Orders.createOrder(user, items, options, dto));
 
         orderOptions.forEach(orderOption -> orderOption.addOrder(saveOrder));
         orderOptionService.newOrderOption(orderOptions);
 
         return ResultResponse.success("주문이 완료되었습니다.");
+    }
+
+    @Transactional
+    public ResultResponse updateOrder(Long orderId, OrderStatus orderStatus) {
+        final Orders orders = findById(orderId);
+        orders.updateOrderStatus(orderStatus);
+        return ResultResponse.success("주문상태를 변경했습니다.");
+    }
+
+    public Orders findById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalThreadStateException("해당 주문내역을 찾을 수 없습니다."));
     }
 }

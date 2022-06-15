@@ -24,31 +24,22 @@ public class OrderOption extends BaseTimeEntity {
     @Column(name = "stock")
     private int stock;
 
-    @Column(name = "delivery_fee")
-    private int deliveryFee;
-
     @OneToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "order_status")
-    private OrderStatus orderStatus;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "payment_status")
-    private PaymentStatus paymentStatus;
+    @Column(name = "delivery_status")
+    private DeliveryStatus deliveryStatus;
 
     @Column(name = "finished_date")
     private LocalDateTime finishedDate;
 
-    public static OrderOption createOrderOption(OrderForm dto, int deliveryFee, PaymentStatus paymentStatus) {
+    public static OrderOption createOrderOption(OrderForm dto) {
         return OrderOption.builder()
                 .price(dto.getPrice())
                 .stock(dto.getStock())
-                .deliveryFee(deliveryFee)
-                .orderStatus(OrderStatus.ORDER)
-                .paymentStatus(paymentStatus)
+                .deliveryStatus(DeliveryStatus.PREPARATION)
                 .build();
     }
     public void addOrder(Orders orders) {
