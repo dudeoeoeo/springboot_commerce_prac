@@ -104,4 +104,22 @@ public class OrdersControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void getOrderList() throws Exception {
+        final User user = userSave();
+        addOrder(user);
+        final String token = getTokenByUser(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/list")
+                    .header(JwtProperties.HEADER_STRING, token)
+                    .param("searchPage", "1")
+                    .param("searchCount", "10")
+                    .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
