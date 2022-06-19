@@ -19,16 +19,13 @@ public interface OrderMapper {
 
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
-    default public OrderDetailResponse toResponse(Orders order, List<OrderOption> orderOptions) {
+    default public OrderDetailResponse toOrderResponse(Orders order) {
         return OrderDetailResponse.builder()
                 .orderId(order.getId())
                 .deliveryFee(order.getDeliveryFee())
                 .orderStatus(order.getOrderStatus())
                 .paymentStatus(order.getPaymentStatus())
                 .build();
-//        final List<OrderOptionResponse> orderOptionResponse = orderOptions.stream()
-//                .map(option -> toOrderOptionResponse(option))
-//                .collect(Collectors.toList());
     }
 
     default public OrderOptionResponse toOrderOptionResponse(OrderOption orderOptions) {

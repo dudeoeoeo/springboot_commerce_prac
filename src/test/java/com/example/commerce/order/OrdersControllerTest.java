@@ -3,6 +3,7 @@ package com.example.commerce.order;
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.cart.domain.Cart;
 import com.example.commerce.business.item.domain.Item;
+import com.example.commerce.business.order.domain.OrderOption;
 import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.domain.Orders;
 import com.example.commerce.business.order.domain.PaymentStatus;
@@ -122,4 +123,39 @@ public class OrdersControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void 다중_상품_리스트() throws Exception {
+
+        final User user = userSave();
+        addOrders(user);
+        final String token = getTokenByUser(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/list")
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .param("searchPage", "1")
+                        .param("searchCount", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void getOrderOptionDetail() throws Exception {
+        final User user = userSave();
+        final OrderOption orderOption = addOrderOption(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/detail/{optionId}", orderOption.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+
 }

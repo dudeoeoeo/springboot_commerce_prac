@@ -20,6 +20,20 @@ public class OrderController extends CommonUtil {
 
     private final OrderService orderService;
 
+    @GetMapping("/list")
+    public SuccessResponse getOrderList(HttpServletRequest request,
+                                        @RequestParam("searchPage") int searchPage,
+                                        @RequestParam("searchCount") int searchCount)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), orderService.getOrderList(getUserId(request), searchPage, searchCount));
+    }
+
+    @GetMapping("/detail/{optionId}")
+    public SuccessResponse getOrderOptionDetail(@PathVariable Long optionId)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), orderService.getOrderOptionDetail(optionId));
+    }
+
     @PostMapping("/add")
     public SuccessResponse newOrder(HttpServletRequest request,
                                     @Valid @RequestBody OrderRequest dto,

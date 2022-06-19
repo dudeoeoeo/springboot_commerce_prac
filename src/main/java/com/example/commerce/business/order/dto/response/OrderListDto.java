@@ -1,7 +1,7 @@
 package com.example.commerce.business.order.dto.response;
 
-import com.example.commerce.business.item.dto.response.ItemDetailResponseDto;
 import com.example.commerce.business.item.dto.response.ItemOptionResponseDto;
+import com.example.commerce.business.item.dto.response.ItemResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 public class OrderListDto {
 
     private OrderDetailResponse order;
-    private List<ItemDetailResponseDto> itemDetailResponseDtoList;
+    private List<ItemResponseDto> itemResponseDtoList;
     private List<ItemOptionResponseDto> itemOptionResponseDtoList;
     private List<OrderOptionResponse> optionResponseList;
 

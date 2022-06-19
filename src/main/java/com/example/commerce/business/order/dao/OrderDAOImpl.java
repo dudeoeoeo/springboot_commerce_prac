@@ -39,8 +39,8 @@ public class OrderDAOImpl implements OrderDAO {
                 .stream().map(entry -> OrderListDto.builder()
                         .order(orderMapper.toOrderResponse(entry.getKey()))
                         .optionResponseList(entry.getValue().stream().map(orderMapper::toOrderOptionResponse).collect(Collectors.toList()))
-                        .itemResponseDtoList(itemMapper.toItemResponse(entry.getKey().getItem()))
-                        .itemOptionResponseDtoList(itemMapper.toOptionResponse(entry.getKey().getItemOption()))
+                        .itemResponseDtoList(entry.getValue().stream().map(o -> itemMapper.toItemResponse(o.getItem())).collect(Collectors.toList()))
+                        .itemOptionResponseDtoList(entry.getValue().stream().map(o -> itemMapper.toOptionResponse(o.getItemOption())).collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
 
