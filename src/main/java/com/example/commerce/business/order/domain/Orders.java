@@ -25,11 +25,11 @@ public class Orders extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Item> item;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<ItemOption> itemOption;
+//    @OneToMany(cascade = CascadeType.ALL)
+//    private List<Item> item;
+//
+//    @OneToMany(cascade = CascadeType.ALL)
+//    private List<ItemOption> itemOption;
 
     @Column(name = "delivery_fee")
     private int deliveryFee;
@@ -43,16 +43,12 @@ public class Orders extends BaseTimeEntity {
     private PaymentStatus paymentStatus;
 
     public static Orders createOrder(User user,
-                                     List<Item> items,
-                                     List<ItemOption> options,
                                      OrderRequest dto) {
         return Orders.builder()
                 .deliveryFee(dto.getDeliveryFee())
                 .orderStatus(OrderStatus.ORDER)
                 .paymentStatus(dto.getPaymentStatus())
                 .user(user)
-                .item(items)
-                .itemOption(options)
                 .build();
     }
 

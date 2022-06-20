@@ -38,6 +38,9 @@ public class OrderOption extends BaseTimeEntity {
     @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 
+    @Column(name = "tracking_number")
+    private String trackingNumber;
+
     @Enumerated(value = EnumType.STRING)
     @Column(name = "delivery_status")
     private DeliveryStatus deliveryStatus;
@@ -56,5 +59,9 @@ public class OrderOption extends BaseTimeEntity {
     }
     public void addOrder(Orders orders) {
         this.orders = orders;
+    }
+
+    public void updateTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
     }
 }

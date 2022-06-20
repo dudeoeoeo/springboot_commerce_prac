@@ -40,6 +40,7 @@ public class OrderOptionDetailResponse {
                         .orderOptionId(option.getId())
                         .price(option.getPrice())
                         .stock(option.getStock())
+                        .trackingNumber(option.getTrackingNumber())
                         .deliveryStatus(option.getDeliveryStatus())
                         .finishedDate(option.getFinishedDate())
                         .build())

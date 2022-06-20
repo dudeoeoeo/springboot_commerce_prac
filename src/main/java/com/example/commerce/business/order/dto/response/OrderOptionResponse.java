@@ -17,6 +17,7 @@ public class OrderOptionResponse {
     private Long orderOptionId;
     private int price;
     private int stock;
+    private String trackingNumber;
     private DeliveryStatus deliveryStatus;
     private LocalDateTime finishedDate;
 }
