@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 public interface OrderService {
 
     ResultResponse newOrder(Long userId, OrderRequest dto);
-    ResultResponse updateOrder(Long orderId, OrderStatus orderStatus);
     Page<OrderListDto> getOrderList(Long userId, int page, int size);
     Orders findById(Long orderId);
     OrderOptionDetailResponse getOrderOptionDetail(Long orderOptionId);

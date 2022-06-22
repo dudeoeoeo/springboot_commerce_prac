@@ -42,6 +42,10 @@ public class OrderOption extends BaseTimeEntity {
     private String trackingNumber;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "order_status")
+    private OrderStatus orderStatus;
+
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "delivery_status")
     private DeliveryStatus deliveryStatus;
 
@@ -54,6 +58,7 @@ public class OrderOption extends BaseTimeEntity {
                 .stock(dto.getStock())
                 .item(item)
                 .itemOption(option)
+                .orderStatus(OrderStatus.ORDER)
                 .deliveryStatus(DeliveryStatus.PREPARATION)
                 .build();
     }
@@ -63,5 +68,9 @@ public class OrderOption extends BaseTimeEntity {
 
     public void updateTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
+    }
+
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }

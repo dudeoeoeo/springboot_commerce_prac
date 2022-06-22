@@ -54,13 +54,6 @@ public class OrderServiceImpl implements OrderService {
         return ResultResponse.success("주문이 완료되었습니다.");
     }
 
-    @Transactional
-    public ResultResponse updateOrder(Long orderId, OrderStatus orderStatus) {
-        final Orders orders = findById(orderId);
-        orders.updateOrderStatus(orderStatus);
-        return ResultResponse.success("주문상태를 변경했습니다.");
-    }
-
     @Transactional(readOnly = true)
     public Page<OrderListDto> getOrderList(Long userId, int page, int size) {
         final User user = userService.findUserByUserId(userId);

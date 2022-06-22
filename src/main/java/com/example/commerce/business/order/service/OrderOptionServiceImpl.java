@@ -1,6 +1,7 @@
 package com.example.commerce.business.order.service;
 
 import com.example.commerce.business.order.domain.OrderOption;
+import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.repository.OrderOptionRepository;
 import com.example.commerce.common.dto.ResultResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class OrderOptionServiceImpl implements OrderOptionService {
     private final OrderOptionRepository optionRepository;
 
     @Override
+    @Transactional
     public void newOrderOption(List<OrderOption> options) {
         optionRepository.saveAll(options);
     }
@@ -30,6 +32,14 @@ public class OrderOptionServiceImpl implements OrderOptionService {
         final OrderOption orderOption = findById(orderOptionId);
         orderOption.updateTrackingNumber(trackingNumber);
         return ResultResponse.success("운송장 번호를 입력했습니다.");
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse updateOrderOption(Long optionId, OrderStatus orderStatus) {
+        final OrderOption option = findById(optionId);
+        option.updateOrderStatus(orderStatus);
+        return ResultResponse.success("주문상태를 변경했습니다.");
     }
 
 }

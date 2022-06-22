@@ -2,6 +2,7 @@ package com.example.commerce.business.order.controller;
 
 import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.dto.request.OrderRequest;
+import com.example.commerce.business.order.service.OrderOptionService;
 import com.example.commerce.business.order.service.OrderService;
 import com.example.commerce.common.dto.SuccessResponse;
 import com.example.commerce.common.util.CommonUtil;
@@ -14,11 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/orders")
+@RequestMapping("/api/v1/order")
 @RequiredArgsConstructor
 public class OrderController extends CommonUtil {
 
     private final OrderService orderService;
+    private final OrderOptionService orderOptionService;
 
     @GetMapping("/list")
     public SuccessResponse getOrderList(HttpServletRequest request,
@@ -43,10 +45,10 @@ public class OrderController extends CommonUtil {
         return SuccessResponse.of(HttpStatus.OK.value(), orderService.newOrder(userId, dto));
     }
 
-    @PatchMapping("/status/{orderId}")
-    public SuccessResponse updateOrder(@PathVariable Long orderId,
+    @PatchMapping("/status/{optionId}")
+    public SuccessResponse updateOrder(@PathVariable Long optionId,
                                        @RequestParam("orderStatus") OrderStatus orderStatus)
     {
-        return SuccessResponse.of(HttpStatus.OK.value(), orderService.updateOrder(orderId, orderStatus));
+        return SuccessResponse.of(HttpStatus.OK.value(), orderOptionService.updateOrderOption(optionId, orderStatus));
     }
 }

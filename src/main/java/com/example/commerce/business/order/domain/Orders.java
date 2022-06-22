@@ -35,10 +35,6 @@ public class Orders extends BaseTimeEntity {
     private int deliveryFee;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "order_status")
-    private OrderStatus orderStatus;
-
-    @Enumerated(value = EnumType.STRING)
     @Column(name = "payment_status")
     private PaymentStatus paymentStatus;
 
@@ -46,13 +42,9 @@ public class Orders extends BaseTimeEntity {
                                      OrderRequest dto) {
         return Orders.builder()
                 .deliveryFee(dto.getDeliveryFee())
-                .orderStatus(OrderStatus.ORDER)
                 .paymentStatus(dto.getPaymentStatus())
                 .user(user)
                 .build();
     }
 
-    public void updateOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
 }
