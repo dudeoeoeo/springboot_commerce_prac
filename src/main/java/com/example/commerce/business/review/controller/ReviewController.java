@@ -20,6 +20,14 @@ public class ReviewController extends CommonUtil {
 
     private final ReviewService reviewService;
 
+    @GetMapping("/list/{itemId}")
+    public SuccessResponse getReviewList(@PathVariable Long itemId,
+                                         @RequestParam int searchPage,
+                                         @RequestParam int searchCount)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), reviewService.getReviewList(itemId, getSearchPage(searchPage), searchCount));
+    }
+
     @PostMapping("/add")
     public SuccessResponse addReview(HttpServletRequest request,
                                      @Valid @RequestPart("review_request") final AddReviewRequest dto,
@@ -27,5 +35,13 @@ public class ReviewController extends CommonUtil {
     {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), reviewService.addReview(userId, dto, uploadFiles));
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public SuccessResponse addReview(HttpServletRequest request,
+                                     @PathVariable Long reviewId)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), reviewService.deleteReview(userId, reviewId));
     }
 }

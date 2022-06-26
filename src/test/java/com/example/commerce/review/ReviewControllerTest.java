@@ -4,7 +4,7 @@ import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.cart.domain.Cart;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.order.domain.OrderOption;
-import com.example.commerce.business.order.domain.Orders;
+import com.example.commerce.business.review.domain.Review;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.config.RestDocsTestSupport;
 import org.junit.jupiter.api.Test;
@@ -17,10 +17,28 @@ import java.nio.charset.StandardCharsets;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 public class ReviewControllerTest extends RestDocsTestSupport {
 
     private final String PREFIX = "/api/v1/review";
+
+    @Test
+    @Transactional
+    void getReviewList() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final Review review = addReview(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/list/{itemId}", review.getItem().getId())
+                .header(JwtProperties.HEADER_STRING, token)
+                .param("searchPage", "1")
+                .param("searchCount", "10")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
     @Test
     @Transactional
