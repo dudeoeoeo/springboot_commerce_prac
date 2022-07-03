@@ -33,4 +33,17 @@ public class Point extends BaseTimeEntity {
 
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
+
+    public static Point newPoint(User user) {
+        return Point.builder()
+                .user(user)
+                .point(0)
+                .build();
+    }
+    public void plus(int point) {
+        this.point = this.point + point;
+    }
+    public void minus(int point) {
+        this.point = this.point - point;
+    }
 }

@@ -23,6 +23,9 @@ public class PointOption extends BaseTimeEntity {
     @JoinColumn(name = "point_id")
     private Point point;
 
+    @Column(name = "money")
+    private int money;
+
     @Column(name = "use")
     private PointUse pointUse;
 
@@ -37,4 +40,13 @@ public class PointOption extends BaseTimeEntity {
 
     @Column(name = "delete_dt", insertable = false)
     private LocalDateTime deleteDt;
+
+    public static PointOption newPointOption(Point point, int money, PointType type, PointUse use) {
+        return PointOption.builder()
+                .point(point)
+                .money(money)
+                .pointType(type)
+                .pointUse(use)
+                .build();
+    }
 }
