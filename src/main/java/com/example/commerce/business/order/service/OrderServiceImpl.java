@@ -2,13 +2,14 @@ package com.example.commerce.business.order.service;
 
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.item.service.ItemService;
-import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.domain.Orders;
 import com.example.commerce.business.order.domain.OrderOption;
 import com.example.commerce.business.order.dto.request.OrderRequest;
 import com.example.commerce.business.order.dto.response.OrderListDto;
 import com.example.commerce.business.order.dto.response.OrderOptionDetailResponse;
 import com.example.commerce.business.order.repository.OrderRepository;
+import com.example.commerce.business.point.domain.PointType;
+import com.example.commerce.business.point.service.PointService;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
 import com.example.commerce.common.dto.ResultResponse;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final ItemService itemService;
     private final ItemOptionService optionService;
     private final OrderOptionService orderOptionService;
+    private final PointService pointService;
 
     @Transactional
     public ResultResponse newOrder(Long userId, OrderRequest dto) {
@@ -50,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderOptions.forEach(orderOption -> orderOption.addOrder(saveOrder));
         orderOptionService.newOrderOption(orderOptions);
+        pointService.plusPoint(user, dto.getTotalPrice(), PointType.ORDER);
 
         return ResultResponse.success("주문이 완료되었습니다.");
     }

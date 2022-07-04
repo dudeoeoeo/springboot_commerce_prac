@@ -11,5 +11,5 @@ public interface OrderOptionService {
     void newOrderOption(List<OrderOption> options);
     OrderOption findById(Long orderOptionId);
     ResultResponse updateTrackingNumber(Long orderOptionId, String trackingNumber);
-    ResultResponse updateOrderOption(Long optionId, OrderStatus orderStatus);
+    ResultResponse updateOrderOption(Long userId, Long optionId, OrderStatus orderStatus);
 }

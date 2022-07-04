@@ -46,9 +46,11 @@ public class OrderController extends CommonUtil {
     }
 
     @PatchMapping("/status/{optionId}")
-    public SuccessResponse updateOrder(@PathVariable Long optionId,
+    public SuccessResponse updateOrder(HttpServletRequest request,
+                                       @PathVariable Long optionId,
                                        @RequestParam("orderStatus") OrderStatus orderStatus)
     {
-        return SuccessResponse.of(HttpStatus.OK.value(), orderOptionService.updateOrderOption(optionId, orderStatus));
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), orderOptionService.updateOrderOption(userId, optionId, orderStatus));
     }
 }
