@@ -48,4 +48,14 @@ public class ItemOptionServiceImpl implements ItemOptionService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 옵션을 찾을 수 없습니다."));
     }
 
+    @Transactional
+    public ResultResponse updateStock(Long optionId, int stock) {
+        final ItemOption option = findById(optionId);
+        int saveStock = option.getOptionStock();
+        if (saveStock >= stock + 1)
+            return ResultResponse.success("수량이 변경되었습니다.");
+        else
+            return ResultResponse.success("최대수량은 " + saveStock + "개 입니다.");
+    }
+
 }

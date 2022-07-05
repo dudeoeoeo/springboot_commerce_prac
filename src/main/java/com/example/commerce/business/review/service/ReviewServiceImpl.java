@@ -4,6 +4,8 @@ import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.service.ItemService;
 import com.example.commerce.business.order.domain.OrderOption;
 import com.example.commerce.business.order.service.OrderOptionService;
+import com.example.commerce.business.point.domain.PointType;
+import com.example.commerce.business.point.service.PointService;
 import com.example.commerce.business.review.domain.Review;
 import com.example.commerce.business.review.domain.ReviewImage;
 import com.example.commerce.business.review.dto.request.AddReviewRequest;
@@ -17,11 +19,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     private ItemService itemService;
     private OrderOptionService orderOptionService;
     private AmazonS3Service amazonS3Service;
+    private final PointService pointService;
     private final String FOLDER = "review";
 
     @Override
@@ -51,11 +54,18 @@ public class ReviewServiceImpl implements ReviewService {
         final Item item = itemService.findByItemId(dto.getItemId());
         final OrderOption orderOption = orderOptionService.findById(dto.getOrderOptionId());
 
-        final List<ReviewImage> reviewImageList =
-                reviewImageService.createReviewImage(amazonS3Service.uploadFiles(files, FOLDER));
+        if (files.isEmpty() == false) {
+            final List<ReviewImage> reviewImageList =
+                    reviewImageService.createReviewImage(amazonS3Service.uploadFiles(files, FOLDER));
+            final Review review = Review.createReview(user, item, orderOption, dto, reviewImageList);
+            reviewRepository.save(review);
+            pointService.plusPoint(user, 100, PointType.PHOTO_REVIEW);
+        } else {
+            final Review review = Review.createReview(user, item, orderOption, dto, null);
+            reviewRepository.save(review);
+            pointService.minusPoint(user, 50, PointType.TEXT_REVIEW);
+        }
 
-        final Review review = Review.createReview(user, item, orderOption, dto, reviewImageList);
-        reviewRepository.save(review);
         return ResultResponse.success("상품 리뷰를 추가했습니다.");
     }
 

@@ -10,4 +10,5 @@ public interface ItemOptionService {
     ResultResponse updateItemOption(Long itemOptionId, ItemOptionAddRequestDto dto);
     ResultResponse deleteItemOption(Long userId, Long itemOptionId);
     ItemOption findById(Long optionId);
+    ResultResponse updateStock(Long optionId, int stock);
 }

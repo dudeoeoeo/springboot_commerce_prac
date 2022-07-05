@@ -22,11 +22,11 @@ public class Review extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
 
@@ -66,5 +66,10 @@ public class Review extends BaseTimeEntity {
                 .star(dto.getStar())
                 .reviewImages(reviewImages)
                 .build();
+    }
+    public void deleteReview(User user) {
+        this.deleteYn = 1;
+        this.deleteBy = user.getName();
+        this.deleteDt = LocalDateTime.now().withNano(0);
     }
 }

@@ -32,13 +32,15 @@ public class Item extends BaseTimeEntity {
 
     private String name;
 
-    private int price;
+    /**
+     * TODO: item option 에서 가격과 수량 등을 정하고
+     *       item 자체는 category 분류와 상품 이름만 결정
+     */
+//    private int price;
+//    private int stock;
+//    private int weight;
 
-    private int stock;
-
-    private int weight;
-
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
@@ -66,9 +68,9 @@ public class Item extends BaseTimeEntity {
                                List<ItemOption> options) {
         return Item.builder()
                 .name(dto.getName())
-                .price(dto.getPrice())
-                .stock(dto.getStock())
-                .weight(dto.getWeight())
+//                .price(dto.getPrice())
+//                .stock(dto.getStock())
+//                .weight(dto.getWeight())
                 .category(category)
                 .itemImages(itemImages)
                 .options(options)
@@ -78,9 +80,7 @@ public class Item extends BaseTimeEntity {
 
     public void updateItemContent(ItemUpdateRequestDto dto) {
         this.name = dto.getName();
-        this.price = dto.getPrice();
-        this.stock = dto.getStock();
-        this.weight = dto.getWeight();
+        this.itemStatus = dto.getItemStatus();
     }
 
     public void deleteItem(User user) {

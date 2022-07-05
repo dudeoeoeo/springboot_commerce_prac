@@ -26,15 +26,15 @@ public class OrderOption extends BaseTimeEntity {
     @Column(name = "stock")
     private int stock;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders orders;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 

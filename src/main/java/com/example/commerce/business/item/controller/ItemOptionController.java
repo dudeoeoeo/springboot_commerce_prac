@@ -18,6 +18,13 @@ public class ItemOptionController extends CommonUtil {
 
     private final ItemOptionService optionService;
 
+    @PatchMapping("/stock/{optionId}")
+    public SuccessResponse updateStock(@PathVariable Long optionId,
+                                       @RequestParam("stock") int stock)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), optionService.updateStock(optionId, stock));
+    }
+
     @PutMapping("/{optionId}")
     public SuccessResponse updateItemOption(@PathVariable Long optionId,
                                             @Valid @RequestBody ItemOptionAddRequestDto dto)
