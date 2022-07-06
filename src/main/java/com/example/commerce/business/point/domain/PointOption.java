@@ -19,7 +19,7 @@ public class PointOption extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "point_id")
     private Point point;
 
