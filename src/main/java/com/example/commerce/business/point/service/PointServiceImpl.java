@@ -1,8 +1,10 @@
 package com.example.commerce.business.point.service;
 
 import com.example.commerce.business.point.domain.Point;
+import com.example.commerce.business.point.domain.PointOption;
 import com.example.commerce.business.point.domain.PointType;
 import com.example.commerce.business.point.domain.PointUse;
+import com.example.commerce.business.point.dto.response.PointResponse;
 import com.example.commerce.business.point.repository.PointRepository;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
@@ -11,13 +13,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PointServiceImpl implements PointService {
 
     private final PointRepository pointRepository;
     private final UserService userService;
     private final PointOptionService optionService;
+
+    @Override
+    public PointResponse getPoint(Long userId) {
+        final Point point = pointRepository.findByUser(userService.findUserByUserId(userId));
+        return pointRepository.getPoints(point);
+    }
 
     @Override
     @Transactional
