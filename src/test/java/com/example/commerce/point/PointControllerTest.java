@@ -31,4 +31,22 @@ public class PointControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void getPointLog() throws Exception {
+        final User user = userSave();
+        addPoints(user);
+        final String token = getTokenByUser(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/log")
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .param("searchPage", "1")
+                        .param("searchCount", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

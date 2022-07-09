@@ -1,4 +1,4 @@
-package com.example.commerce.business.point;
+package com.example.commerce.business.point.mapper;
 
 import com.example.commerce.business.point.domain.Point;
 import com.example.commerce.business.point.domain.PointOption;
