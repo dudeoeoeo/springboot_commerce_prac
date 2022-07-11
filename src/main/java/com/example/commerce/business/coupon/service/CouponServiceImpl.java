@@ -41,4 +41,19 @@ public class CouponServiceImpl implements CouponService {
                 .map(c -> couponMapper.toCouponResponse(c))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public CouponResponse getDetailCoupon(Long userId, Long couponId) {
+        final User user = userService.findUserByUserId(userId);
+        final Coupon coupon = findById(couponId);
+        if (user.getId() != coupon.getUser().getId())
+            throw new IllegalArgumentException("해당 유저의 쿠폰이 아닙니다.");
+        return couponMapper.toCouponResponse(coupon);
+    }
+
+    @Override
+    public Coupon findById(Long couponId) {
+        return couponRepository.findById(couponId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 쿠폰을 찾을 수 없습니다."));
+    }
 }
