@@ -48,6 +48,8 @@ public class CouponServiceImpl implements CouponService {
         final Coupon coupon = findById(couponId);
         if (user.getId() != coupon.getUser().getId())
             throw new IllegalArgumentException("해당 유저의 쿠폰이 아닙니다.");
+        if (coupon.isCouponUse())
+            throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
         return couponMapper.toCouponResponse(coupon);
     }
 
