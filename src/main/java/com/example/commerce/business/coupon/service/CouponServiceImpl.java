@@ -1,7 +1,7 @@
 package com.example.commerce.business.coupon.service;
 
 import com.example.commerce.business.coupon.domain.Coupon;
-import com.example.commerce.business.coupon.dto.CouponAddRequest;
+import com.example.commerce.business.coupon.dto.request.CouponAddRequest;
 import com.example.commerce.business.coupon.dto.response.CouponResponse;
 import com.example.commerce.business.coupon.mapper.CouponMapper;
 import com.example.commerce.business.coupon.repository.CouponRepository;
@@ -51,6 +51,16 @@ public class CouponServiceImpl implements CouponService {
         if (coupon.isCouponUse())
             throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
         return couponMapper.toCouponResponse(coupon);
+    }
+
+    @Override
+    public ResultResponse useCoupon(Long userId, Long couponId, int price) {
+        final Coupon coupon = findById(couponId);
+        if (userId != coupon.getUser().getId())
+            throw new IllegalArgumentException("해당 회원의 쿠폰이 아닙니다.");
+        if (price < coupon.getCondition())
+            throw new IllegalArgumentException("쿠폰 사용 조건이 맞지 않습니다.");
+        return ResultResponse.success("쿠폰을 적용했습니다.");
     }
 
     @Override

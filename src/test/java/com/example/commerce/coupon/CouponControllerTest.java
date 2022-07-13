@@ -74,5 +74,21 @@ public class CouponControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+    @Test
+    @Transactional
+    void useCoupon () throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<Coupon> coupons = addCoupons(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/use/{couponId}", coupons.get(0).getId())
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .param("price", "33000")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
 }

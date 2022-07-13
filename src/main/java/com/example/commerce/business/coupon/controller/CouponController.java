@@ -1,6 +1,6 @@
 package com.example.commerce.business.coupon.controller;
 
-import com.example.commerce.business.coupon.dto.CouponAddRequest;
+import com.example.commerce.business.coupon.dto.request.CouponAddRequest;
 import com.example.commerce.business.coupon.service.CouponService;
 import com.example.commerce.common.dto.SuccessResponse;
 import com.example.commerce.common.util.CommonUtil;
@@ -30,6 +30,15 @@ public class CouponController extends CommonUtil {
     public SuccessResponse getCouponList(HttpServletRequest request) {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), couponService.getCouponList(userId));
+    }
+
+    @GetMapping("/use/{couponId}")
+    public SuccessResponse useCoupon(HttpServletRequest request,
+                                     @PathVariable Long couponId,
+                                     @RequestParam("price") int price)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), couponService.useCoupon(userId, couponId, price));
     }
 
     @GetMapping("/{couponId}")
