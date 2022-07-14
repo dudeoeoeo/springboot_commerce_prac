@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public List<CouponResponse> getCouponList(Long userId) {
         final User user = userService.findUserByUserId(userId);
-        final List<Coupon> coupons = couponRepository.findAllByUserAndCouponUse(user, false);
+        final List<Coupon> coupons = couponRepository.findAllByUserAndCouponUseAndExpiredDate(user, false, LocalDateTime.now());
         return coupons.stream()
                 .map(c -> couponMapper.toCouponResponse(c))
                 .collect(Collectors.toList());
