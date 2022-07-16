@@ -10,9 +10,12 @@ public class OrderRequest {
 
     private List<OrderForm> orderForms;
 
+    private Long couponId;
+
     private int totalPrice;
 
     private int deliveryFee;
 
     private PaymentStatus paymentStatus;
+
 }

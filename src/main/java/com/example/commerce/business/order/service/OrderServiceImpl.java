@@ -1,5 +1,7 @@
 package com.example.commerce.business.order.service;
 
+import com.example.commerce.business.coupon.domain.Coupon;
+import com.example.commerce.business.coupon.service.CouponService;
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.item.service.ItemService;
 import com.example.commerce.business.order.domain.Orders;
@@ -25,6 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -33,11 +36,23 @@ public class OrderServiceImpl implements OrderService {
     private final ItemOptionService optionService;
     private final OrderOptionService orderOptionService;
     private final PointService pointService;
+    private final CouponService couponService;
 
     @Transactional
     public ResultResponse newOrder(Long userId, OrderRequest dto) {
         final User user = userService.findUserByUserId(userId);
         List<OrderOption> orderOptions = new ArrayList<>();
+
+        Coupon coupon = null;
+        System.out.println("coupon");
+        if (dto.getCouponId() > 0) {
+            coupon = couponService.findById(dto.getCouponId());
+            System.out.println("coupon => " + coupon.toString());
+            if (dto.getTotalPrice() < coupon.getCondition())
+                throw new IllegalArgumentException("쿠폰을 사용할 수 없는 주문입니다.");
+            else if (coupon.isCouponUse())
+                throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
+        }
 
         dto.getOrderForms().forEach(orderForm -> {
 //            items.add(itemService.findByItemId(orderForm.getItemId()));
@@ -48,8 +63,9 @@ public class OrderServiceImpl implements OrderService {
                     optionService.findById(orderForm.getItemOptionId())));
         });
 
-        final Orders saveOrder = orderRepository.save(Orders.createOrder(user, dto));
-
+        System.out.println("order save");
+        final Orders saveOrder = orderRepository.save(Orders.createOrder(user, dto, coupon));
+        System.out.println("order saved");
         orderOptions.forEach(orderOption -> orderOption.addOrder(saveOrder));
         orderOptionService.newOrderOption(orderOptions);
         pointService.plusPoint(user, dto.getTotalPrice(), PointType.ORDER);
@@ -57,7 +73,6 @@ public class OrderServiceImpl implements OrderService {
         return ResultResponse.success("주문이 완료되었습니다.");
     }
 
-    @Transactional(readOnly = true)
     public Page<OrderListDto> getOrderList(Long userId, int page, int size) {
         final User user = userService.findUserByUserId(userId);
         Pageable pageable = PageRequest.of(getSearchPage(page), size);
@@ -69,7 +84,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new IllegalThreadStateException("해당 주문내역을 찾을 수 없습니다."));
     }
 
-    @Transactional(readOnly = true)
     public OrderOptionDetailResponse getOrderOptionDetail(Long orderOptionId) {
         final OrderOption option = orderOptionService.findById(orderOptionId);
         return OrderOptionDetailResponse.createOptionDetail(option);

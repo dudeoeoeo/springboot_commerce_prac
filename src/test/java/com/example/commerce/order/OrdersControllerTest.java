@@ -2,6 +2,7 @@ package com.example.commerce.order;
 
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.cart.domain.Cart;
+import com.example.commerce.business.coupon.domain.Coupon;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.order.domain.OrderOption;
 import com.example.commerce.business.order.domain.OrderStatus;
@@ -22,7 +23,7 @@ import java.util.*;
 
 public class OrdersControllerTest extends RestDocsTestSupport {
 
-    private final String PREFIX = "/api/v1/orders";
+    private final String PREFIX = "/api/v1/order";
 
     @Test
     @Transactional
@@ -52,6 +53,37 @@ public class OrdersControllerTest extends RestDocsTestSupport {
         )
         .andDo(print())
         .andExpect(status().isOk());
+    }
+    @Test
+    @Transactional
+    void newOrderWithCoupon() throws Exception {
+        final User user = userSave();
+        final Cart cart = saveCart(user);
+        final String token = getTokenByUser(user);
+        final Item item = addItem();
+        final List<Coupon> coupons = addCoupons(user);
+
+        Map<String, Object> orderFormMap = new HashMap<>();
+        orderFormMap.put("itemId", item.getId());
+        orderFormMap.put("itemOptionId", item.getOptions().get(0).getId());
+        orderFormMap.put("stock", 2);
+        orderFormMap.put("price", item.getOptions().get(0).getOptionPrice() * 2);
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("orderForms", new ArrayList<>(Arrays.asList(orderFormMap)));
+        request.put("totalPrice", item.getOptions().get(0).getOptionPrice() * 2);
+        request.put("deliveryFee", 2500);
+        request.put("paymentStatus", PaymentStatus.CARD);
+        request.put("couponId", coupons.get(0).getId());
+
+        mockMvc.perform(
+                post(PREFIX + "/add")
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .content(createJson(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
