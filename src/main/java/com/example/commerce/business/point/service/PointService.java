@@ -14,6 +14,7 @@ public interface PointService {
     PointResponse getPoint(Long userId);
     List<PointLogResponse> getPointLog(Long userId, int searchPage, int searchCount);
     Point newPoint(User user);
+    void usePoint(User user, int point);
     ResultResponse plusPoint(User user, int point, PointType type);
     ResultResponse minusPoint(User user, int point, PointType type);
     Point findByUser(User user);

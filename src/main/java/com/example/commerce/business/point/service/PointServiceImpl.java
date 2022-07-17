@@ -50,6 +50,16 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
+    public void usePoint(User user, int point) {
+        final Point entity = findByUser(user);
+        if (entity.getPoint() < point)
+            throw new IllegalArgumentException("보유하신 포인트보다 많은 금액을 사용하실 수 없습니다.");
+        entity.minus(point);
+        pointRepository.save(entity);
+    }
+
+    @Override
+    @Transactional
     public ResultResponse plusPoint(User user, int point, PointType type) {
         final Point entity = findByUser(user);
         entity.plus(point);

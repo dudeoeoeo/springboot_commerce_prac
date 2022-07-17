@@ -44,14 +44,15 @@ public class OrderServiceImpl implements OrderService {
         List<OrderOption> orderOptions = new ArrayList<>();
 
         Coupon coupon = null;
-        System.out.println("coupon");
         if (dto.getCouponId() > 0) {
             coupon = couponService.findById(dto.getCouponId());
-            System.out.println("coupon => " + coupon.toString());
             if (dto.getTotalPrice() < coupon.getCondition())
                 throw new IllegalArgumentException("쿠폰을 사용할 수 없는 주문입니다.");
             else if (coupon.isCouponUse())
                 throw new IllegalArgumentException("이미 사용한 쿠폰입니다.");
+        }
+        if (dto.getUsePoint() > 0) {
+            pointService.usePoint(user, dto.getUsePoint());
         }
 
         dto.getOrderForms().forEach(orderForm -> {
@@ -63,9 +64,7 @@ public class OrderServiceImpl implements OrderService {
                     optionService.findById(orderForm.getItemOptionId())));
         });
 
-        System.out.println("order save");
         final Orders saveOrder = orderRepository.save(Orders.createOrder(user, dto, coupon));
-        System.out.println("order saved");
         orderOptions.forEach(orderOption -> orderOption.addOrder(saveOrder));
         orderOptionService.newOrderOption(orderOptions);
         pointService.plusPoint(user, dto.getTotalPrice(), PointType.ORDER);
