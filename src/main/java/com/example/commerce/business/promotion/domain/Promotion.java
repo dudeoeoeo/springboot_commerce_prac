@@ -27,6 +27,9 @@ public class Promotion extends BaseTimeEntity {
     @Column(name = "discount_percent")
     private double discountPercent;
 
+    @Column(name = "sale_price")
+    private int salePrice;
+
     @Column(name = "stock")
     private int stock;
 
@@ -35,6 +38,14 @@ public class Promotion extends BaseTimeEntity {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    // 쿠폰 사용 가능 여부
+    @Column(name = "can_use_coupon")
+    private boolean useCoupon;
+
+    // 포인트 사용 가능 여부
+    @Column(name = "can_use_point")
+    private boolean usePoint;
 
     @Column(name = "delete_yn", insertable = false)
     private int deleteYn;
@@ -49,7 +60,10 @@ public class Promotion extends BaseTimeEntity {
         return Promotion.builder()
                 .itemOption(itemOption)
                 .discountPercent(dto.getDiscountPercent())
+                .salePrice((int) (itemOption.getOptionPrice() * (dto.getDiscountPercent() / 100)))
                 .stock(dto.getStock())
+                .usePoint(dto.isUsePoint())
+                .useCoupon(dto.isUseCoupon())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .build();

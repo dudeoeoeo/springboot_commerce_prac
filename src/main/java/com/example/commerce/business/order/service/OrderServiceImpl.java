@@ -6,12 +6,16 @@ import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.item.service.ItemService;
 import com.example.commerce.business.order.domain.Orders;
 import com.example.commerce.business.order.domain.OrderOption;
+import com.example.commerce.business.order.dto.request.OrderPromotionRequest;
 import com.example.commerce.business.order.dto.request.OrderRequest;
+import com.example.commerce.business.order.dto.request.PromotionSaveForm;
 import com.example.commerce.business.order.dto.response.OrderListDto;
 import com.example.commerce.business.order.dto.response.OrderOptionDetailResponse;
 import com.example.commerce.business.order.repository.OrderRepository;
 import com.example.commerce.business.point.domain.PointType;
 import com.example.commerce.business.point.service.PointService;
+import com.example.commerce.business.promotion.domain.Promotion;
+import com.example.commerce.business.promotion.service.PromotionService;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
 import com.example.commerce.common.dto.ResultResponse;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +42,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderOptionService orderOptionService;
     private final PointService pointService;
     private final CouponService couponService;
+    private final PromotionService promotionService;
 
     @Transactional
     public ResultResponse newOrder(Long userId, OrderRequest dto) {
@@ -70,6 +76,20 @@ public class OrderServiceImpl implements OrderService {
         pointService.plusPoint(user, dto.getTotalPrice(), PointType.ORDER);
 
         return ResultResponse.success("주문이 완료되었습니다.");
+    }
+
+    /**
+     * TODO: promotion 정책, (쿠폰, 포인트 사용 여부), log 관리
+     */
+    @Override
+    public ResultResponse buyPromotion(Long userId, OrderPromotionRequest dto) {
+        final User user = userService.findUserByUserId(userId);
+        List<OrderOption> orderOptions = new ArrayList<>();
+        final List<PromotionSaveForm> promotions = dto.getPromotionForms().stream()
+                .map(e -> PromotionSaveForm.newPromotionSaveForm(promotionService.findById(e.getPromotionId()), e))
+                .collect(Collectors.toList());
+
+        return null;
     }
 
     public Page<OrderListDto> getOrderList(Long userId, int page, int size) {
