@@ -1,6 +1,7 @@
 package com.example.commerce.business.order.controller;
 
 import com.example.commerce.business.order.domain.OrderStatus;
+import com.example.commerce.business.order.dto.request.OrderPromotionRequest;
 import com.example.commerce.business.order.dto.request.OrderRequest;
 import com.example.commerce.business.order.service.OrderOptionService;
 import com.example.commerce.business.order.service.OrderService;
@@ -43,6 +44,15 @@ public class OrderController extends CommonUtil {
     {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), orderService.newOrder(userId, dto));
+    }
+
+    @PostMapping("/promotion/buy")
+    public SuccessResponse buyPromotion(HttpServletRequest request,
+                                        @Valid @RequestBody OrderPromotionRequest dto,
+                                        BindingResult bindingResult)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), orderService.buyPromotion(userId, dto));
     }
 
     @PatchMapping("/status/{optionId}")

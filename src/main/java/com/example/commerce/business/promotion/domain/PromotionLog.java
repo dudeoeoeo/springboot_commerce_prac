@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Promotion
+ * Promotion 상품 log
  */
 @Entity @Getter
 @ToString @Builder

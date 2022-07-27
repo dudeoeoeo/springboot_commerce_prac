@@ -12,9 +12,12 @@ import com.example.commerce.business.order.dto.request.PromotionSaveForm;
 import com.example.commerce.business.order.dto.response.OrderListDto;
 import com.example.commerce.business.order.dto.response.OrderOptionDetailResponse;
 import com.example.commerce.business.order.repository.OrderRepository;
+import com.example.commerce.business.point.domain.Point;
 import com.example.commerce.business.point.domain.PointType;
 import com.example.commerce.business.point.service.PointService;
 import com.example.commerce.business.promotion.domain.Promotion;
+import com.example.commerce.business.promotion.domain.PromotionLog;
+import com.example.commerce.business.promotion.repository.PromotionLogRepository;
 import com.example.commerce.business.promotion.service.PromotionService;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
@@ -43,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     private final PointService pointService;
     private final CouponService couponService;
     private final PromotionService promotionService;
+    private final PromotionLogRepository promotionLogRepository;
 
     @Transactional
     public ResultResponse newOrder(Long userId, OrderRequest dto) {
@@ -82,14 +86,48 @@ public class OrderServiceImpl implements OrderService {
      * TODO: promotion 정책, (쿠폰, 포인트 사용 여부), log 관리
      */
     @Override
+    @Transactional
     public ResultResponse buyPromotion(Long userId, OrderPromotionRequest dto) {
         final User user = userService.findUserByUserId(userId);
+        final Coupon coupon = couponService.findById(dto.getCouponId());
+        final Point point = pointService.findByUser(user);
         List<OrderOption> orderOptions = new ArrayList<>();
+
         final List<PromotionSaveForm> promotions = dto.getPromotionForms().stream()
                 .map(e -> PromotionSaveForm.newPromotionSaveForm(promotionService.findById(e.getPromotionId()), e))
                 .collect(Collectors.toList());
+        int totalCouponPrice = 0, totalPointPrice = 0;
 
-        return null;
+        for (PromotionSaveForm p : promotions) {
+            if (p.getPromotion().isUseCoupon())
+                totalCouponPrice += p.getOrderPrice();
+
+            if (p.getPromotion().isUsePoint())
+                totalPointPrice += p.getOrderPrice();
+        }
+
+        couponService.useCoupon(userId, dto.getCouponId(), totalCouponPrice);
+
+        if (point.getPoint() < dto.getPoint())
+            throw new IllegalThreadStateException("보유하신 포인트보다 많은 금액을 사용하실 수 없습니다.");
+        int usePoint = 0;
+        if (totalPointPrice > dto.getPoint()) {
+            pointService.usePoint(user, dto.getPoint());
+            usePoint = dto.getPoint();
+        }
+        else {
+            pointService.usePoint(user, totalPointPrice);
+            usePoint = totalPointPrice;
+        }
+
+        for (PromotionSaveForm form : promotions) {
+            promotionLogRepository.save(
+                    PromotionLog.newPromotionLog(
+                            form, user, coupon, usePoint
+                    )
+            );
+        }
+        return ResultResponse.success("상품을 구매했습니다.");
     }
 
     public Page<OrderListDto> getOrderList(Long userId, int page, int size) {

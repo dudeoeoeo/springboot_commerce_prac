@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "promotion")
 public class Promotion extends BaseTimeEntity {
 
-    @Id @Column(name = "point_id")
+    @Id @Column(name = "promotion_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

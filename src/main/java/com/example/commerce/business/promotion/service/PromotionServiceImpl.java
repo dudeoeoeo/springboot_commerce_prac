@@ -26,4 +26,13 @@ public class PromotionServiceImpl implements PromotionService {
         promotionRepository.save(promotion);
         return ResultResponse.success("새로운 프로모션 상품을 등록했습니다.");
     }
+
+    @Override
+    public Promotion findById(Long promotionId) {
+        final Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new IllegalThreadStateException("해당 프로모션 상품을 찾을 수 없습니다."));
+        if (promotion.getDeleteYn() == 1)
+            throw new IllegalThreadStateException("해당 프로모션이 종료되었습니다.");
+        return promotion;
+    }
 }
