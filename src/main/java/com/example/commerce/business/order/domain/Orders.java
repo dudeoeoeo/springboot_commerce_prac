@@ -1,5 +1,6 @@
 package com.example.commerce.business.order.domain;
 
+import com.example.commerce.business.coupon.domain.Coupon;
 import com.example.commerce.business.item.domain.Item;
 import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.order.dto.request.OrderRequest;
@@ -24,6 +25,11 @@ public class Orders extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+    // 한 번 주문에 하나의 쿠폰 사용
+    @OneToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 
 //    @OneToMany(cascade = CascadeType.ALL)
 //    private List<Item> item;
@@ -39,11 +45,12 @@ public class Orders extends BaseTimeEntity {
     private PaymentStatus paymentStatus;
 
     public static Orders createOrder(User user,
-                                     OrderRequest dto) {
+                                     OrderRequest dto, Coupon coupon) {
         return Orders.builder()
                 .deliveryFee(dto.getDeliveryFee())
                 .paymentStatus(dto.getPaymentStatus())
                 .user(user)
+                .coupon(coupon)
                 .build();
     }
 

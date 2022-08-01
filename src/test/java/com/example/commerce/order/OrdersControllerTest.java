@@ -9,6 +9,8 @@ import com.example.commerce.business.order.domain.OrderStatus;
 import com.example.commerce.business.order.domain.Orders;
 import com.example.commerce.business.order.domain.PaymentStatus;
 import com.example.commerce.business.order.dto.request.OrderForm;
+import com.example.commerce.business.order.dto.request.OrderPromotionForm;
+import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.config.RestDocsTestSupport;
 import org.junit.jupiter.api.Test;
@@ -255,5 +257,36 @@ public class OrdersControllerTest extends RestDocsTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Transactional
+    void buyPromotion() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<Promotion> promotions = addPromotions();
+        final List<Coupon> coupons = addCoupons(user);
+
+        List<Object> orderPromotionForms = new ArrayList<>();
+        for (Promotion promotion : promotions) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("promotionId", promotion.getId());
+            map.put("stock", 2);
+            map.put("price", promotion.getSalePrice() * 2);
+            orderPromotionForms.add(map);
+        }
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("promotionForms", orderPromotionForms);
+        requestMap.put("couponId", coupons.get(0).getId());
+        requestMap.put("point", 0);
+
+        mockMvc.perform(
+                post(PREFIX + "/promotion/buy")
+                .header(JwtProperties.HEADER_STRING, token)
+                .content(createJson(requestMap))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
 }
