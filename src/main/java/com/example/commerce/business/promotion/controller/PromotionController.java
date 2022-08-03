@@ -7,11 +7,9 @@ import com.example.commerce.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -26,5 +24,14 @@ public class PromotionController extends CommonUtil {
                                         BindingResult bindingResult)
     {
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.addPromotion(dto));
+    }
+
+    @GetMapping("/log")
+    public SuccessResponse getPromotionLogs(HttpServletRequest request,
+                                            @RequestParam("searchPage") int searchPage,
+                                            @RequestParam("searchCount") int searchCount)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionLogs(userId, getSearchPage(searchPage), searchCount));
     }
 }

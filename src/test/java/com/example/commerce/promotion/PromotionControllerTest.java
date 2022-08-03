@@ -45,4 +45,22 @@ public class PromotionControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void getPromotionLogs() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        addPromotionLogs(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/log")
+                .header(JwtProperties.HEADER_STRING, token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("searchPage", "1")
+                .param("searchCount", "10")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
