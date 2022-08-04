@@ -10,5 +10,6 @@ public interface PromotionService {
 
     ResultResponse addPromotion(AddPromotion dto);
     Promotion findById(Long promotionId);
+    PromotionResponse getPromotionLogDetail(Long userId, Long promotionId);
     Page<PromotionResponse> getPromotionLogs(Long userId, int page, int size);
 }

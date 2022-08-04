@@ -1,5 +1,6 @@
 package com.example.commerce.business.promotion.dao;
 
+import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
 import com.example.commerce.business.promotion.mapper.PromotionMapper;
 import com.example.commerce.business.user.domain.User;
@@ -24,6 +25,27 @@ public class PromotionDAOImpl implements PromotionDAO {
 
     private final JPAQueryFactory jpaQueryFactory;
     private final PromotionMapper promotionMapper;
+
+    @Override
+    public PromotionResponse getPromotionLogDetail(User user, Promotion entity) {
+        final PromotionResponse contents = jpaQueryFactory
+                .from(
+                        promotion,
+                        promotionLog
+                )
+                .where(
+                        promotionLog.promotion.eq(promotion),
+                        promotionLog.user.eq(user)
+                )
+                .transform(groupBy(promotion).as(list(promotionLog)))
+                .entrySet()
+                .stream()
+                .map(entry -> promotionMapper.toPromotionLogResponse(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList())
+                .get(0);
+
+        return contents;
+    }
 
     @Override
     public Page<PromotionResponse> getPromotionLog(Pageable pageable, User user) {

@@ -4,7 +4,6 @@ import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
-import com.example.commerce.business.promotion.dto.response.PromotionLogResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
 import com.example.commerce.business.promotion.repository.PromotionRepository;
 import com.example.commerce.business.user.domain.User;
@@ -42,6 +41,13 @@ public class PromotionServiceImpl implements PromotionService {
         if (promotion.getDeleteYn() == 1)
             throw new IllegalThreadStateException("해당 프로모션이 종료되었습니다.");
         return promotion;
+    }
+
+    @Override
+    public PromotionResponse getPromotionLogDetail(Long userId, Long promotionId) {
+        final User user = userService.findUserByUserId(userId);
+        final Promotion promotion = findById(promotionId);
+        return promotionRepository.getPromotionLogDetail(user, promotion);
     }
 
     @Override
