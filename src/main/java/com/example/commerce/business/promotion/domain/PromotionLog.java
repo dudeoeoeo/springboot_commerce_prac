@@ -23,7 +23,7 @@ public class PromotionLog extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

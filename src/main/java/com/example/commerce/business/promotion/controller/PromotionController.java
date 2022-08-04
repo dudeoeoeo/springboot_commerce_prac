@@ -34,4 +34,11 @@ public class PromotionController extends CommonUtil {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionLogs(userId, getSearchPage(searchPage), searchCount));
     }
+    @GetMapping("/log/{promotionId}")
+    public SuccessResponse getPromotionLogDetail(HttpServletRequest request,
+                                            @PathVariable Long promotionId)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionLogDetail(userId, promotionId));
+    }
 }

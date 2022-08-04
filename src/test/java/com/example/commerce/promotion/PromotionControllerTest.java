@@ -2,6 +2,7 @@ package com.example.commerce.promotion;
 
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.item.domain.Item;
+import com.example.commerce.business.promotion.domain.PromotionLog;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.config.RestDocsTestSupport;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -63,4 +65,21 @@ public class PromotionControllerTest extends RestDocsTestSupport {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @Transactional
+    void getPromotionLogDetail() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<PromotionLog> promotionLogs = addPromotionLogs(user);
+
+        mockMvc.perform(
+                get(PREFIX + "/log/{promotionId}", promotionLogs.get(0).getPromotion().getId())
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
