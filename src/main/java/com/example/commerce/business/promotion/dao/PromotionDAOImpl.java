@@ -1,6 +1,7 @@
 package com.example.commerce.business.promotion.dao;
 
 import com.example.commerce.business.promotion.domain.Promotion;
+import com.example.commerce.business.promotion.dto.response.PromotionItemResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
 import com.example.commerce.business.promotion.mapper.PromotionMapper;
 import com.example.commerce.business.user.domain.User;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,35 @@ public class PromotionDAOImpl implements PromotionDAO {
 
     private final JPAQueryFactory jpaQueryFactory;
     private final PromotionMapper promotionMapper;
+
+    @Override
+    public Page<PromotionItemResponse> getPromotionList(Pageable pageable, LocalDate today) {
+        final List<PromotionItemResponse> contents = jpaQueryFactory
+                .selectFrom(
+                        promotion
+                )
+                .where(
+                        promotion.startDate.loe(today),
+                        promotion.endDate.goe(today)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch()
+                .stream()
+                .map(p -> promotionMapper.toPromotionItemResponse(p))
+                .collect(Collectors.toList());
+
+        final JPAQuery<Promotion> count = jpaQueryFactory
+                .selectFrom(
+                        promotion
+                )
+                .where(
+                        promotion.startDate.loe(today),
+                        promotion.endDate.goe(today)
+                );
+
+        return PageableExecutionUtils.getPage(contents, pageable, count::fetchCount);
+    }
 
     @Override
     public PromotionResponse getPromotionLogDetail(User user, Promotion entity) {

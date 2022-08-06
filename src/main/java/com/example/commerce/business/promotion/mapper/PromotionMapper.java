@@ -3,6 +3,7 @@ package com.example.commerce.business.promotion.mapper;
 import com.example.commerce.business.item.dto.response.ItemOptionResponseDto;
 import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.domain.PromotionLog;
+import com.example.commerce.business.promotion.dto.response.PromotionItemResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionLogResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
 import org.mapstruct.Mapper;
@@ -15,6 +16,29 @@ import java.util.List;
 public interface PromotionMapper {
 
     PromotionMapper INSTANCE = Mappers.getMapper(PromotionMapper.class);
+
+    default public PromotionItemResponse toPromotionItemResponse(Promotion promotion) {
+        final ItemOptionResponseDto itemOptionResponseDto = ItemOptionResponseDto.builder()
+                .id(promotion.getItemOption().getId())
+                .optionPrice(promotion.getItemOption().getOptionPrice())
+                .optionStock(promotion.getItemOption().getOptionStock())
+                .optionSize(promotion.getItemOption().getOptionSize())
+                .optionColor(promotion.getItemOption().getOptionColor())
+                .optionWeight(promotion.getItemOption().getOptionWeight())
+                .build();
+
+        return PromotionItemResponse.builder()
+                .promotionId(promotion.getId())
+                .discountPercent(promotion.getDiscountPercent())
+                .salePrice(promotion.getSalePrice())
+                .stock(promotion.getStock())
+                .useCoupon(promotion.isUseCoupon())
+                .usePoint(promotion.isUsePoint())
+                .startDate(promotion.getStartDate())
+                .endDate(promotion.getEndDate())
+                .itemOption(itemOptionResponseDto)
+                .build();
+    }
 
     default public PromotionResponse toPromotionLogResponse(Promotion promotion, List<PromotionLog> log) {
         List<PromotionLogResponse> responses = new ArrayList<>();
