@@ -26,6 +26,13 @@ public class PromotionController extends CommonUtil {
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.addPromotion(dto));
     }
 
+    @GetMapping("/list")
+    public SuccessResponse getPromotionList(@RequestParam("searchPage") int searchPage,
+                                            @RequestParam("searchCount") int searchCount)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionList(getSearchPage(searchPage), searchCount));
+    }
+
     @GetMapping("/log")
     public SuccessResponse getPromotionLogs(HttpServletRequest request,
                                             @RequestParam("searchPage") int searchPage,

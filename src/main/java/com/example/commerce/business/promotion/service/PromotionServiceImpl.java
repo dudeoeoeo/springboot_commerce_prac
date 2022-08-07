@@ -4,7 +4,9 @@ import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
+import com.example.commerce.business.promotion.dto.response.PromotionItemResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
+import com.example.commerce.business.promotion.mapper.PromotionMapper;
 import com.example.commerce.business.promotion.repository.PromotionRepository;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.business.user.service.UserService;
@@ -13,8 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,7 @@ public class PromotionServiceImpl implements PromotionService {
     private final PromotionRepository promotionRepository;
     private final ItemOptionService itemOptionService;
     private final UserService userService;
+    private final PromotionMapper promotionMapper;
 
     @Override
     @Transactional
@@ -32,6 +38,13 @@ public class PromotionServiceImpl implements PromotionService {
         final Promotion promotion = Promotion.newPromotion(itemOption, dto);
         promotionRepository.save(promotion);
         return ResultResponse.success("새로운 프로모션 상품을 등록했습니다.");
+    }
+
+    @Override
+    public Page<PromotionItemResponse> getPromotionList(int page, int size) {
+        Pageable request = PageRequest.of(page, size, Sort.by("id").descending());
+        LocalDate today = LocalDate.now();
+        return promotionRepository.getPromotionList(request, today);
     }
 
     @Override

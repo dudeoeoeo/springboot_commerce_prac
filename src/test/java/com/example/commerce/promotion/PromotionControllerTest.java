@@ -50,6 +50,24 @@ public class PromotionControllerTest extends RestDocsTestSupport {
 
     @Test
     @Transactional
+    void getPromotionList() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        addPromotions();
+
+        mockMvc.perform(
+                get(PREFIX + "/list")
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("searchPage", "1")
+                        .param("searchCount", "10")
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
     void getPromotionLogs() throws Exception {
         final User user = userSave();
         final String token = getTokenByUser(user);
