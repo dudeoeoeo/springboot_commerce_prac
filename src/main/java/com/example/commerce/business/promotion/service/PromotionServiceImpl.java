@@ -4,6 +4,7 @@ import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.item.service.ItemOptionService;
 import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
+import com.example.commerce.business.promotion.dto.request.UpdatePromotion;
 import com.example.commerce.business.promotion.dto.response.PromotionItemResponse;
 import com.example.commerce.business.promotion.dto.response.PromotionResponse;
 import com.example.commerce.business.promotion.mapper.PromotionMapper;
@@ -68,5 +69,19 @@ public class PromotionServiceImpl implements PromotionService {
         final User user = userService.findUserByUserId(userId);
         Pageable request = PageRequest.of(page, size);
         return promotionRepository.getPromotionLog(request, user);
+    }
+
+    @Override
+    @Transactional
+    public ResultResponse updatePromotion(Long promotionId, UpdatePromotion dto) {
+        final Promotion promotion = findById(promotionId);
+        if (dto.getItemOptionId() == 0) {
+            promotion.updatePromotion(dto);
+            return ResultResponse.success("promotion 상품을 업데이트 했습니다.");
+        }
+
+        final ItemOption itemOption = itemOptionService.findById(dto.getItemOptionId());
+        promotion.updatePromotion(dto, itemOption);
+        return ResultResponse.success("promotion 상품을 업데이트 했습니다.");
     }
 }

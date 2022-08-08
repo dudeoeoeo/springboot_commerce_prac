@@ -2,6 +2,7 @@ package com.example.commerce.business.promotion.domain;
 
 import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
+import com.example.commerce.business.promotion.dto.request.UpdatePromotion;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
@@ -68,4 +69,26 @@ public class Promotion extends BaseTimeEntity {
                 .endDate(dto.getEndDate())
                 .build();
     }
+
+    public void updatePromotion(UpdatePromotion dto) {
+        this.discountPercent = dto.getDiscountPercent();
+        this.salePrice = dto.getSalePrice();
+        this.stock = dto.getStock();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.useCoupon = dto.isUseCoupon();
+        this.usePoint = dto.isUsePoint();
+    }
+
+    public void updatePromotion(UpdatePromotion dto, ItemOption itemOption) {
+        this.itemOption = itemOption;
+        this.discountPercent = dto.getDiscountPercent();
+        this.salePrice = dto.getSalePrice();
+        this.stock = dto.getStock();
+        this.startDate = dto.getStartDate();
+        this.endDate = dto.getEndDate();
+        this.useCoupon = dto.isUseCoupon();
+        this.usePoint = dto.isUsePoint();
+    }
+
 }
