@@ -121,6 +121,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         for (PromotionSaveForm form : promotions) {
+            form.getPromotion().updateOrderStock(form.getStock());
             promotionLogRepository.save(
                     PromotionLog.newPromotionLog(
                             form, user, coupon, usePoint

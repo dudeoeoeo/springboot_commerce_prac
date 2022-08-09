@@ -16,4 +16,5 @@ public interface PromotionService {
     PromotionResponse getPromotionLogDetail(Long userId, Long promotionId);
     Page<PromotionResponse> getPromotionLogs(Long userId, int page, int size);
     ResultResponse updatePromotion(Long promotionId, UpdatePromotion dto);
+    ResultResponse deletePromotion(Long userId, Long promotionId);
 }

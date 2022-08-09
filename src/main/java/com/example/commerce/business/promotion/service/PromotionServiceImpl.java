@@ -84,4 +84,13 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.updatePromotion(dto, itemOption);
         return ResultResponse.success("promotion 상품을 업데이트 했습니다.");
     }
+
+    @Override
+    @Transactional
+    public ResultResponse deletePromotion(Long userId, Long promotionId) {
+        final User user = userService.findUserByUserId(userId);
+        final Promotion promotion = findById(promotionId);
+        promotion.deletePromotion(user);
+        return ResultResponse.success("프로모션 상품을 삭제했습니다.");
+    }
 }
