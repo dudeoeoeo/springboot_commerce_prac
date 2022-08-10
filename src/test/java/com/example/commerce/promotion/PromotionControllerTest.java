@@ -2,6 +2,7 @@ package com.example.commerce.promotion;
 
 import com.example.commerce.business.auth.util.JwtProperties;
 import com.example.commerce.business.item.domain.Item;
+import com.example.commerce.business.promotion.domain.Promotion;
 import com.example.commerce.business.promotion.domain.PromotionLog;
 import com.example.commerce.business.user.domain.User;
 import com.example.commerce.config.RestDocsTestSupport;
@@ -95,6 +96,59 @@ public class PromotionControllerTest extends RestDocsTestSupport {
                 get(PREFIX + "/log/{promotionId}", promotionLogs.get(0).getPromotion().getId())
                         .header(JwtProperties.HEADER_STRING, token)
                         .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void updatePromotionWithItemOption() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<Promotion> promotions = addPromotions();
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("itemOptionId", promotions.get(1).getItemOption().getId());
+        requestMap.put("discountPercent", 5.0);
+        requestMap.put("salePrice", 7000);
+        requestMap.put("stock", 40);
+        requestMap.put("startDate", LocalDate.now().minusDays(3));
+        requestMap.put("endDate", LocalDate.now().plusWeeks(4));
+        requestMap.put("useCoupon", true);
+        requestMap.put("usePoint", false);
+
+        mockMvc.perform(
+                put(PREFIX + "/{promotionId}", promotions.get(0).getId())
+                    .header(JwtProperties.HEADER_STRING, token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(createJson(requestMap))
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void updatePromotionWithoutItemOption() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<Promotion> promotions = addPromotions();
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("discountPercent", 5.0);
+        requestMap.put("salePrice", 7000);
+        requestMap.put("stock", 40);
+        requestMap.put("startDate", LocalDate.now().minusDays(3));
+        requestMap.put("endDate", LocalDate.now().plusWeeks(4));
+        requestMap.put("useCoupon", true);
+        requestMap.put("usePoint", false);
+
+        mockMvc.perform(
+                put(PREFIX + "/{promotionId}", promotions.get(0).getId())
+                        .header(JwtProperties.HEADER_STRING, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(createJson(requestMap))
         )
                 .andDo(print())
                 .andExpect(status().isOk());

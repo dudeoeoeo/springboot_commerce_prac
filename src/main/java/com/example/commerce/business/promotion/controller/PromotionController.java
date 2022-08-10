@@ -1,6 +1,7 @@
 package com.example.commerce.business.promotion.controller;
 
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
+import com.example.commerce.business.promotion.dto.request.UpdatePromotion;
 import com.example.commerce.business.promotion.service.PromotionService;
 import com.example.commerce.common.dto.SuccessResponse;
 import com.example.commerce.common.util.CommonUtil;
@@ -48,4 +49,12 @@ public class PromotionController extends CommonUtil {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionLogDetail(userId, promotionId));
     }
+    @PutMapping("/{promotionId}")
+    public SuccessResponse updatePromotion(@PathVariable Long promotionId,
+                                           @Valid @RequestBody UpdatePromotion dto,
+                                           BindingResult bindingResult)
+    {
+        return SuccessResponse.of(HttpStatus.OK.value(), promotionService.updatePromotion(promotionId, dto));
+    }
+
 }
