@@ -36,7 +36,8 @@ public class PromotionDAOImpl implements PromotionDAO {
                 )
                 .where(
                         promotion.startDate.loe(today),
-                        promotion.endDate.goe(today)
+                        promotion.endDate.goe(today),
+                        promotion.deleteYn.eq(0)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -51,7 +52,8 @@ public class PromotionDAOImpl implements PromotionDAO {
                 )
                 .where(
                         promotion.startDate.loe(today),
-                        promotion.endDate.goe(today)
+                        promotion.endDate.goe(today),
+                        promotion.deleteYn.eq(0)
                 );
 
         return PageableExecutionUtils.getPage(contents, pageable, count::fetchCount);
@@ -66,7 +68,8 @@ public class PromotionDAOImpl implements PromotionDAO {
                 )
                 .where(
                         promotionLog.promotion.eq(promotion),
-                        promotionLog.user.eq(user)
+                        promotionLog.user.eq(user),
+                        promotionLog.deleteYn.eq(0)
                 )
                 .transform(groupBy(promotion).as(list(promotionLog)))
                 .entrySet()
@@ -86,7 +89,7 @@ public class PromotionDAOImpl implements PromotionDAO {
                         promotion,
                         promotionLog
                 )
-                .where(promotionLog.user.eq(user))
+                .where(promotionLog.user.eq(user), promotionLog.deleteYn.eq(0))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(promotionLog.id.desc())
@@ -102,7 +105,7 @@ public class PromotionDAOImpl implements PromotionDAO {
                         promotionLog
                 )
                 .leftJoin(promotionLog.promotion, promotion)
-                .where(promotionLog.user.eq(user));
+                .where(promotionLog.user.eq(user), promotionLog.deleteYn.eq(0));
         return PageableExecutionUtils.getPage(contents, pageable, count::fetchCount);
     }
 }

@@ -3,6 +3,7 @@ package com.example.commerce.business.promotion.domain;
 import com.example.commerce.business.item.domain.ItemOption;
 import com.example.commerce.business.promotion.dto.request.AddPromotion;
 import com.example.commerce.business.promotion.dto.request.UpdatePromotion;
+import com.example.commerce.business.user.domain.User;
 import com.example.commerce.common.constant.BaseTimeEntity;
 import lombok.*;
 
@@ -70,6 +71,12 @@ public class Promotion extends BaseTimeEntity {
                 .build();
     }
 
+    public void updateOrderStock(int orderStock) {
+        if (this.stock < orderStock)
+            throw new IllegalArgumentException("현재 재고수량이 부족합니다.");
+        this.stock = this.stock - orderStock;
+    }
+
     public void updatePromotion(UpdatePromotion dto) {
         this.discountPercent = dto.getDiscountPercent();
         this.salePrice = dto.getSalePrice();
@@ -91,4 +98,9 @@ public class Promotion extends BaseTimeEntity {
         this.usePoint = dto.isUsePoint();
     }
 
+    public void deletePromotion(User user) {
+        this.deleteBy = user.getName();
+        this.deleteDt = LocalDateTime.now();
+        this.deleteYn = 1;
+    }
 }

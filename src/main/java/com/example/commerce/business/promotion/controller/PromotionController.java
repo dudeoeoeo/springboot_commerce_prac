@@ -44,7 +44,7 @@ public class PromotionController extends CommonUtil {
     }
     @GetMapping("/log/{promotionId}")
     public SuccessResponse getPromotionLogDetail(HttpServletRequest request,
-                                            @PathVariable Long promotionId)
+                                                @PathVariable Long promotionId)
     {
         final Long userId = getUserId(request);
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.getPromotionLogDetail(userId, promotionId));
@@ -55,6 +55,13 @@ public class PromotionController extends CommonUtil {
                                            BindingResult bindingResult)
     {
         return SuccessResponse.of(HttpStatus.OK.value(), promotionService.updatePromotion(promotionId, dto));
+    }
+    @DeleteMapping("/{promotionId}")
+    public SuccessResponse deletePromotion(HttpServletRequest request,
+                                           @PathVariable Long promotionId)
+    {
+        final Long userId = getUserId(request);
+        return SuccessResponse.of(HttpStatus.OK.value(), promotionService.deletePromotion(userId, promotionId));
     }
 
 }

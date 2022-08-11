@@ -154,4 +154,19 @@ public class PromotionControllerTest extends RestDocsTestSupport {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Transactional
+    void deletePromotion() throws Exception {
+        final User user = userSave();
+        final String token = getTokenByUser(user);
+        final List<Promotion> promotions = addPromotions();
+
+        mockMvc.perform(
+                delete(PREFIX + "/{promotionId}", promotions.get(0).getId())
+                        .header(JwtProperties.HEADER_STRING, token)
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }
