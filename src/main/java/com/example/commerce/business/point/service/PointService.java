@@ -18,4 +18,5 @@ public interface PointService {
     ResultResponse plusPoint(User user, int point, PointType type);
     ResultResponse minusPoint(User user, int point, PointType type);
     Point findByUser(User user);
+    void findAllExpiredPoint();
 }

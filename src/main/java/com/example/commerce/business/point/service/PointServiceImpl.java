@@ -16,8 +16,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +31,7 @@ public class PointServiceImpl implements PointService {
     private final PointRepository pointRepository;
     private final UserService userService;
     private final PointOptionService optionService;
+    private static final int CHUNK_SIZE = 1000;
 
     @Override
     public PointResponse getPoint(Long userId) {
@@ -83,5 +88,24 @@ public class PointServiceImpl implements PointService {
             return newPoint(user);
         }
         return point.get();
+    }
+
+    @Override
+    @Transactional
+    public void findAllExpiredPoint() {
+        LocalDateTime expiredDateTime = LocalDateTime.now().minusYears(1);
+        final List<Long> pointIds = pointRepository.findAllExpiredPointIds(expiredDateTime);
+
+        final AtomicInteger count = new AtomicInteger();
+
+        pointIds
+                .stream()
+                .collect(groupingBy(id -> count.getAndIncrement() / CHUNK_SIZE))
+                .values()
+                .forEach(this::bulkUpdate);
+    }
+
+    private void bulkUpdate(List<Long> pointOptionIds) {
+        pointRepository.bulkUpdateExpiredPoint(pointOptionIds);
     }
 }
