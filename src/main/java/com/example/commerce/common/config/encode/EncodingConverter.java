@@ -1,9 +1,13 @@
 package com.example.commerce.common.config.encode;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.AttributeConverter;
@@ -18,8 +22,22 @@ import java.util.Locale;
 public class EncodingConverter implements AttributeConverter<String, String> {
 
     private static final String UTF_8 = "UTF-8";
-    @Value("${com.secretKey}")
+//    @Value("${com.secretKey}")
     private static String SECRET_KEY;
+
+    @Autowired
+    private Environment env;
+
+    private String SECRET;
+
+    @PostConstruct
+    void init() {
+        try {
+            SECRET_KEY = env.getProperty("com.secretKey");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     // SHA512
     private static String getSHA512() {
@@ -53,6 +71,7 @@ public class EncodingConverter implements AttributeConverter<String, String> {
     public String convertToEntityAttribute(String encodedText) {
         if (encodedText == null)
             return null;
+
         String strKey = getSHA512();
         final Cipher decryptCipher = Cipher.getInstance("AES");
         decryptCipher.init(Cipher.DECRYPT_MODE, generateMySQLAESKey(strKey, UTF_8));
